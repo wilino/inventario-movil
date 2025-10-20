@@ -779,6 +779,15 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _skuMeta = const VerificationMeta('sku');
+  @override
+  late final GeneratedColumn<String> sku = GeneratedColumn<String>(
+    'sku',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -806,18 +815,70 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
   late final GeneratedColumn<String> category = GeneratedColumn<String>(
     'category',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
+    requiredDuringInsert: true,
   );
-  static const VerificationMeta _skuMeta = const VerificationMeta('sku');
+  static const VerificationMeta _costPriceMeta = const VerificationMeta(
+    'costPrice',
+  );
   @override
-  late final GeneratedColumn<String> sku = GeneratedColumn<String>(
-    'sku',
+  late final GeneratedColumn<double> costPrice = GeneratedColumn<double>(
+    'cost_price',
     aliasedName,
-    true,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _salePriceMeta = const VerificationMeta(
+    'salePrice',
+  );
+  @override
+  late final GeneratedColumn<double> salePrice = GeneratedColumn<double>(
+    'sale_price',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _unitMeta = const VerificationMeta('unit');
+  @override
+  late final GeneratedColumn<String> unit = GeneratedColumn<String>(
+    'unit',
+    aliasedName,
+    false,
     type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _hasVariantsMeta = const VerificationMeta(
+    'hasVariants',
+  );
+  @override
+  late final GeneratedColumn<bool> hasVariants = GeneratedColumn<bool>(
+    'has_variants',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
     requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("has_variants" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
@@ -841,31 +902,32 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _isDeletedMeta = const VerificationMeta(
-    'isDeleted',
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
   );
   @override
-  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
-    'is_deleted',
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
     aliasedName,
-    false,
-    type: DriftSqlType.bool,
+    true,
+    type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_deleted" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
   );
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    sku,
     name,
     description,
     category,
-    sku,
+    costPrice,
+    salePrice,
+    unit,
+    hasVariants,
+    isActive,
     createdAt,
     updatedAt,
-    isDeleted,
+    deletedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -883,6 +945,14 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('sku')) {
+      context.handle(
+        _skuMeta,
+        sku.isAcceptableOrUnknown(data['sku']!, _skuMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_skuMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -906,11 +976,46 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
         _categoryMeta,
         category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
       );
+    } else if (isInserting) {
+      context.missing(_categoryMeta);
     }
-    if (data.containsKey('sku')) {
+    if (data.containsKey('cost_price')) {
       context.handle(
-        _skuMeta,
-        sku.isAcceptableOrUnknown(data['sku']!, _skuMeta),
+        _costPriceMeta,
+        costPrice.isAcceptableOrUnknown(data['cost_price']!, _costPriceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_costPriceMeta);
+    }
+    if (data.containsKey('sale_price')) {
+      context.handle(
+        _salePriceMeta,
+        salePrice.isAcceptableOrUnknown(data['sale_price']!, _salePriceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_salePriceMeta);
+    }
+    if (data.containsKey('unit')) {
+      context.handle(
+        _unitMeta,
+        unit.isAcceptableOrUnknown(data['unit']!, _unitMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_unitMeta);
+    }
+    if (data.containsKey('has_variants')) {
+      context.handle(
+        _hasVariantsMeta,
+        hasVariants.isAcceptableOrUnknown(
+          data['has_variants']!,
+          _hasVariantsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
       );
     }
     if (data.containsKey('created_at')) {
@@ -929,10 +1034,10 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
     } else if (isInserting) {
       context.missing(_updatedAtMeta);
     }
-    if (data.containsKey('is_deleted')) {
+    if (data.containsKey('deleted_at')) {
       context.handle(
-        _isDeletedMeta,
-        isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta),
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
       );
     }
     return context;
@@ -948,6 +1053,10 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      sku: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sku'],
+      )!,
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -959,11 +1068,27 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
       category: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}category'],
-      ),
-      sku: attachedDatabase.typeMapping.read(
+      )!,
+      costPrice: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}cost_price'],
+      )!,
+      salePrice: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}sale_price'],
+      )!,
+      unit: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}sku'],
-      ),
+        data['${effectivePrefix}unit'],
+      )!,
+      hasVariants: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}has_variants'],
+      )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -972,10 +1097,10 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
-      isDeleted: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_deleted'],
-      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
     );
   }
 
@@ -987,57 +1112,75 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
 
 class Product extends DataClass implements Insertable<Product> {
   final String id;
+  final String sku;
   final String name;
   final String? description;
-  final String? category;
-  final String? sku;
+  final String category;
+  final double costPrice;
+  final double salePrice;
+  final String unit;
+  final bool hasVariants;
+  final bool isActive;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final bool isDeleted;
+  final DateTime? deletedAt;
   const Product({
     required this.id,
+    required this.sku,
     required this.name,
     this.description,
-    this.category,
-    this.sku,
+    required this.category,
+    required this.costPrice,
+    required this.salePrice,
+    required this.unit,
+    required this.hasVariants,
+    required this.isActive,
     required this.createdAt,
     required this.updatedAt,
-    required this.isDeleted,
+    this.deletedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['sku'] = Variable<String>(sku);
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
-    if (!nullToAbsent || category != null) {
-      map['category'] = Variable<String>(category);
-    }
-    if (!nullToAbsent || sku != null) {
-      map['sku'] = Variable<String>(sku);
-    }
+    map['category'] = Variable<String>(category);
+    map['cost_price'] = Variable<double>(costPrice);
+    map['sale_price'] = Variable<double>(salePrice);
+    map['unit'] = Variable<String>(unit);
+    map['has_variants'] = Variable<bool>(hasVariants);
+    map['is_active'] = Variable<bool>(isActive);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
-    map['is_deleted'] = Variable<bool>(isDeleted);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
     return map;
   }
 
   ProductsCompanion toCompanion(bool nullToAbsent) {
     return ProductsCompanion(
       id: Value(id),
+      sku: Value(sku),
       name: Value(name),
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
-      category: category == null && nullToAbsent
-          ? const Value.absent()
-          : Value(category),
-      sku: sku == null && nullToAbsent ? const Value.absent() : Value(sku),
+      category: Value(category),
+      costPrice: Value(costPrice),
+      salePrice: Value(salePrice),
+      unit: Value(unit),
+      hasVariants: Value(hasVariants),
+      isActive: Value(isActive),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
-      isDeleted: Value(isDeleted),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
     );
   }
 
@@ -1048,13 +1191,18 @@ class Product extends DataClass implements Insertable<Product> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Product(
       id: serializer.fromJson<String>(json['id']),
+      sku: serializer.fromJson<String>(json['sku']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
-      category: serializer.fromJson<String?>(json['category']),
-      sku: serializer.fromJson<String?>(json['sku']),
+      category: serializer.fromJson<String>(json['category']),
+      costPrice: serializer.fromJson<double>(json['costPrice']),
+      salePrice: serializer.fromJson<double>(json['salePrice']),
+      unit: serializer.fromJson<String>(json['unit']),
+      hasVariants: serializer.fromJson<bool>(json['hasVariants']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
   }
   @override
@@ -1062,47 +1210,69 @@ class Product extends DataClass implements Insertable<Product> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'sku': serializer.toJson<String>(sku),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
-      'category': serializer.toJson<String?>(category),
-      'sku': serializer.toJson<String?>(sku),
+      'category': serializer.toJson<String>(category),
+      'costPrice': serializer.toJson<double>(costPrice),
+      'salePrice': serializer.toJson<double>(salePrice),
+      'unit': serializer.toJson<String>(unit),
+      'hasVariants': serializer.toJson<bool>(hasVariants),
+      'isActive': serializer.toJson<bool>(isActive),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'isDeleted': serializer.toJson<bool>(isDeleted),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
   }
 
   Product copyWith({
     String? id,
+    String? sku,
     String? name,
     Value<String?> description = const Value.absent(),
-    Value<String?> category = const Value.absent(),
-    Value<String?> sku = const Value.absent(),
+    String? category,
+    double? costPrice,
+    double? salePrice,
+    String? unit,
+    bool? hasVariants,
+    bool? isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
-    bool? isDeleted,
+    Value<DateTime?> deletedAt = const Value.absent(),
   }) => Product(
     id: id ?? this.id,
+    sku: sku ?? this.sku,
     name: name ?? this.name,
     description: description.present ? description.value : this.description,
-    category: category.present ? category.value : this.category,
-    sku: sku.present ? sku.value : this.sku,
+    category: category ?? this.category,
+    costPrice: costPrice ?? this.costPrice,
+    salePrice: salePrice ?? this.salePrice,
+    unit: unit ?? this.unit,
+    hasVariants: hasVariants ?? this.hasVariants,
+    isActive: isActive ?? this.isActive,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
-    isDeleted: isDeleted ?? this.isDeleted,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Product copyWithCompanion(ProductsCompanion data) {
     return Product(
       id: data.id.present ? data.id.value : this.id,
+      sku: data.sku.present ? data.sku.value : this.sku,
       name: data.name.present ? data.name.value : this.name,
       description: data.description.present
           ? data.description.value
           : this.description,
       category: data.category.present ? data.category.value : this.category,
-      sku: data.sku.present ? data.sku.value : this.sku,
+      costPrice: data.costPrice.present ? data.costPrice.value : this.costPrice,
+      salePrice: data.salePrice.present ? data.salePrice.value : this.salePrice,
+      unit: data.unit.present ? data.unit.value : this.unit,
+      hasVariants: data.hasVariants.present
+          ? data.hasVariants.value
+          : this.hasVariants,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
   }
 
@@ -1110,13 +1280,18 @@ class Product extends DataClass implements Insertable<Product> {
   String toString() {
     return (StringBuffer('Product(')
           ..write('id: $id, ')
+          ..write('sku: $sku, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('category: $category, ')
-          ..write('sku: $sku, ')
+          ..write('costPrice: $costPrice, ')
+          ..write('salePrice: $salePrice, ')
+          ..write('unit: $unit, ')
+          ..write('hasVariants: $hasVariants, ')
+          ..write('isActive: $isActive, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('isDeleted: $isDeleted')
+          ..write('deletedAt: $deletedAt')
           ..write(')'))
         .toString();
   }
@@ -1124,107 +1299,157 @@ class Product extends DataClass implements Insertable<Product> {
   @override
   int get hashCode => Object.hash(
     id,
+    sku,
     name,
     description,
     category,
-    sku,
+    costPrice,
+    salePrice,
+    unit,
+    hasVariants,
+    isActive,
     createdAt,
     updatedAt,
-    isDeleted,
+    deletedAt,
   );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Product &&
           other.id == this.id &&
+          other.sku == this.sku &&
           other.name == this.name &&
           other.description == this.description &&
           other.category == this.category &&
-          other.sku == this.sku &&
+          other.costPrice == this.costPrice &&
+          other.salePrice == this.salePrice &&
+          other.unit == this.unit &&
+          other.hasVariants == this.hasVariants &&
+          other.isActive == this.isActive &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
-          other.isDeleted == this.isDeleted);
+          other.deletedAt == this.deletedAt);
 }
 
 class ProductsCompanion extends UpdateCompanion<Product> {
   final Value<String> id;
+  final Value<String> sku;
   final Value<String> name;
   final Value<String?> description;
-  final Value<String?> category;
-  final Value<String?> sku;
+  final Value<String> category;
+  final Value<double> costPrice;
+  final Value<double> salePrice;
+  final Value<String> unit;
+  final Value<bool> hasVariants;
+  final Value<bool> isActive;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
-  final Value<bool> isDeleted;
+  final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const ProductsCompanion({
     this.id = const Value.absent(),
+    this.sku = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.category = const Value.absent(),
-    this.sku = const Value.absent(),
+    this.costPrice = const Value.absent(),
+    this.salePrice = const Value.absent(),
+    this.unit = const Value.absent(),
+    this.hasVariants = const Value.absent(),
+    this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
-    this.isDeleted = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ProductsCompanion.insert({
     required String id,
+    required String sku,
     required String name,
     this.description = const Value.absent(),
-    this.category = const Value.absent(),
-    this.sku = const Value.absent(),
+    required String category,
+    required double costPrice,
+    required double salePrice,
+    required String unit,
+    this.hasVariants = const Value.absent(),
+    this.isActive = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
-    this.isDeleted = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
+       sku = Value(sku),
        name = Value(name),
+       category = Value(category),
+       costPrice = Value(costPrice),
+       salePrice = Value(salePrice),
+       unit = Value(unit),
        createdAt = Value(createdAt),
        updatedAt = Value(updatedAt);
   static Insertable<Product> custom({
     Expression<String>? id,
+    Expression<String>? sku,
     Expression<String>? name,
     Expression<String>? description,
     Expression<String>? category,
-    Expression<String>? sku,
+    Expression<double>? costPrice,
+    Expression<double>? salePrice,
+    Expression<String>? unit,
+    Expression<bool>? hasVariants,
+    Expression<bool>? isActive,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
-    Expression<bool>? isDeleted,
+    Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (sku != null) 'sku': sku,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (category != null) 'category': category,
-      if (sku != null) 'sku': sku,
+      if (costPrice != null) 'cost_price': costPrice,
+      if (salePrice != null) 'sale_price': salePrice,
+      if (unit != null) 'unit': unit,
+      if (hasVariants != null) 'has_variants': hasVariants,
+      if (isActive != null) 'is_active': isActive,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
-      if (isDeleted != null) 'is_deleted': isDeleted,
+      if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   ProductsCompanion copyWith({
     Value<String>? id,
+    Value<String>? sku,
     Value<String>? name,
     Value<String?>? description,
-    Value<String?>? category,
-    Value<String?>? sku,
+    Value<String>? category,
+    Value<double>? costPrice,
+    Value<double>? salePrice,
+    Value<String>? unit,
+    Value<bool>? hasVariants,
+    Value<bool>? isActive,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
-    Value<bool>? isDeleted,
+    Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return ProductsCompanion(
       id: id ?? this.id,
+      sku: sku ?? this.sku,
       name: name ?? this.name,
       description: description ?? this.description,
       category: category ?? this.category,
-      sku: sku ?? this.sku,
+      costPrice: costPrice ?? this.costPrice,
+      salePrice: salePrice ?? this.salePrice,
+      unit: unit ?? this.unit,
+      hasVariants: hasVariants ?? this.hasVariants,
+      isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      isDeleted: isDeleted ?? this.isDeleted,
+      deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1235,6 +1460,9 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     if (id.present) {
       map['id'] = Variable<String>(id.value);
     }
+    if (sku.present) {
+      map['sku'] = Variable<String>(sku.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -1244,8 +1472,20 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     if (category.present) {
       map['category'] = Variable<String>(category.value);
     }
-    if (sku.present) {
-      map['sku'] = Variable<String>(sku.value);
+    if (costPrice.present) {
+      map['cost_price'] = Variable<double>(costPrice.value);
+    }
+    if (salePrice.present) {
+      map['sale_price'] = Variable<double>(salePrice.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<String>(unit.value);
+    }
+    if (hasVariants.present) {
+      map['has_variants'] = Variable<bool>(hasVariants.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -1253,8 +1493,8 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
-    if (isDeleted.present) {
-      map['is_deleted'] = Variable<bool>(isDeleted.value);
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -1266,13 +1506,18 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   String toString() {
     return (StringBuffer('ProductsCompanion(')
           ..write('id: $id, ')
+          ..write('sku: $sku, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('category: $category, ')
-          ..write('sku: $sku, ')
+          ..write('costPrice: $costPrice, ')
+          ..write('salePrice: $salePrice, ')
+          ..write('unit: $unit, ')
+          ..write('hasVariants: $hasVariants, ')
+          ..write('isActive: $isActive, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('isDeleted: $isDeleted, ')
+          ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -5010,25 +5255,35 @@ typedef $$UserProfilesTableProcessedTableManager =
 typedef $$ProductsTableCreateCompanionBuilder =
     ProductsCompanion Function({
       required String id,
+      required String sku,
       required String name,
       Value<String?> description,
-      Value<String?> category,
-      Value<String?> sku,
+      required String category,
+      required double costPrice,
+      required double salePrice,
+      required String unit,
+      Value<bool> hasVariants,
+      Value<bool> isActive,
       required DateTime createdAt,
       required DateTime updatedAt,
-      Value<bool> isDeleted,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 typedef $$ProductsTableUpdateCompanionBuilder =
     ProductsCompanion Function({
       Value<String> id,
+      Value<String> sku,
       Value<String> name,
       Value<String?> description,
-      Value<String?> category,
-      Value<String?> sku,
+      Value<String> category,
+      Value<double> costPrice,
+      Value<double> salePrice,
+      Value<String> unit,
+      Value<bool> hasVariants,
+      Value<bool> isActive,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
-      Value<bool> isDeleted,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 
@@ -5043,6 +5298,11 @@ class $$ProductsTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sku => $composableBuilder(
+    column: $table.sku,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5061,8 +5321,28 @@ class $$ProductsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get sku => $composableBuilder(
-    column: $table.sku,
+  ColumnFilters<double> get costPrice => $composableBuilder(
+    column: $table.costPrice,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get salePrice => $composableBuilder(
+    column: $table.salePrice,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get unit => $composableBuilder(
+    column: $table.unit,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get hasVariants => $composableBuilder(
+    column: $table.hasVariants,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5076,8 +5356,8 @@ class $$ProductsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<bool> get isDeleted => $composableBuilder(
-    column: $table.isDeleted,
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -5096,6 +5376,11 @@ class $$ProductsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get sku => $composableBuilder(
+    column: $table.sku,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -5111,8 +5396,28 @@ class $$ProductsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get sku => $composableBuilder(
-    column: $table.sku,
+  ColumnOrderings<double> get costPrice => $composableBuilder(
+    column: $table.costPrice,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get salePrice => $composableBuilder(
+    column: $table.salePrice,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get unit => $composableBuilder(
+    column: $table.unit,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get hasVariants => $composableBuilder(
+    column: $table.hasVariants,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -5126,8 +5431,8 @@ class $$ProductsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<bool> get isDeleted => $composableBuilder(
-    column: $table.isDeleted,
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -5144,6 +5449,9 @@ class $$ProductsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get sku =>
+      $composableBuilder(column: $table.sku, builder: (column) => column);
+
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
@@ -5155,8 +5463,22 @@ class $$ProductsTableAnnotationComposer
   GeneratedColumn<String> get category =>
       $composableBuilder(column: $table.category, builder: (column) => column);
 
-  GeneratedColumn<String> get sku =>
-      $composableBuilder(column: $table.sku, builder: (column) => column);
+  GeneratedColumn<double> get costPrice =>
+      $composableBuilder(column: $table.costPrice, builder: (column) => column);
+
+  GeneratedColumn<double> get salePrice =>
+      $composableBuilder(column: $table.salePrice, builder: (column) => column);
+
+  GeneratedColumn<String> get unit =>
+      $composableBuilder(column: $table.unit, builder: (column) => column);
+
+  GeneratedColumn<bool> get hasVariants => $composableBuilder(
+    column: $table.hasVariants,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -5164,8 +5486,8 @@ class $$ProductsTableAnnotationComposer
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
-  GeneratedColumn<bool> get isDeleted =>
-      $composableBuilder(column: $table.isDeleted, builder: (column) => column);
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 }
 
 class $$ProductsTableTableManager
@@ -5197,45 +5519,65 @@ class $$ProductsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> sku = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> description = const Value.absent(),
-                Value<String?> category = const Value.absent(),
-                Value<String?> sku = const Value.absent(),
+                Value<String> category = const Value.absent(),
+                Value<double> costPrice = const Value.absent(),
+                Value<double> salePrice = const Value.absent(),
+                Value<String> unit = const Value.absent(),
+                Value<bool> hasVariants = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
-                Value<bool> isDeleted = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ProductsCompanion(
                 id: id,
+                sku: sku,
                 name: name,
                 description: description,
                 category: category,
-                sku: sku,
+                costPrice: costPrice,
+                salePrice: salePrice,
+                unit: unit,
+                hasVariants: hasVariants,
+                isActive: isActive,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
-                isDeleted: isDeleted,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
                 required String id,
+                required String sku,
                 required String name,
                 Value<String?> description = const Value.absent(),
-                Value<String?> category = const Value.absent(),
-                Value<String?> sku = const Value.absent(),
+                required String category,
+                required double costPrice,
+                required double salePrice,
+                required String unit,
+                Value<bool> hasVariants = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
-                Value<bool> isDeleted = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ProductsCompanion.insert(
                 id: id,
+                sku: sku,
                 name: name,
                 description: description,
                 category: category,
-                sku: sku,
+                costPrice: costPrice,
+                salePrice: salePrice,
+                unit: unit,
+                hasVariants: hasVariants,
+                isActive: isActive,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
-                isDeleted: isDeleted,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -6,8 +6,8 @@ class DeleteProductUseCase {
 
   DeleteProductUseCase(this.repository);
 
-  Future<void> call(int productId) async {
-    if (productId <= 0) {
+  Future<void> call(String productId) async {
+    if (productId.isEmpty) {
       throw Exception('ID de producto inválido');
     }
 

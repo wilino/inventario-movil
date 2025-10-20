@@ -9,7 +9,7 @@ abstract class ProductRepository {
   Future<List<Product>> getActiveProducts();
 
   /// Obtener producto por ID
-  Future<Product?> getProductById(int id);
+  Future<Product?> getProductById(String id);
 
   /// Obtener producto por SKU
   Future<Product?> getProductBySku(String sku);
@@ -27,7 +27,7 @@ abstract class ProductRepository {
   Future<Product> updateProduct(Product product);
 
   /// Eliminar producto (soft delete)
-  Future<void> deleteProduct(int id);
+  Future<void> deleteProduct(String id);
 
   /// Obtener categorías únicas
   Future<List<String>> getCategories();

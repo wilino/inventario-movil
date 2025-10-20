@@ -30,7 +30,10 @@ class AuthRemoteDataSource {
 
   /// Registrar usuario
   Future<UserModel> signUp(
-      String email, String password, String fullName) async {
+    String email,
+    String password,
+    String fullName,
+  ) async {
     try {
       final response = await client.auth.signUp(
         email: email,
@@ -95,10 +98,7 @@ class AuthRemoteDataSource {
   }
 
   /// Actualizar perfil
-  Future<UserModel> updateProfile({
-    String? fullName,
-    String? avatarUrl,
-  }) async {
+  Future<UserModel> updateProfile({String? fullName, String? avatarUrl}) async {
     try {
       final user = client.auth.currentUser;
       if (user == null) {

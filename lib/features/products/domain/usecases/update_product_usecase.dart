@@ -8,7 +8,7 @@ class UpdateProductUseCase {
   UpdateProductUseCase(this.repository);
 
   Future<Product> call(Product product) async {
-    if (product.id == null) {
+    if (product.id.isEmpty) {
       throw Exception('ID de producto es requerido para actualizar');
     }
 

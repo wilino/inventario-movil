@@ -44,7 +44,7 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Product?> getProductById(int id) async {
+  Future<Product?> getProductById(String id) async {
     return await localDataSource.getProductById(id);
   }
 
@@ -98,7 +98,7 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<void> deleteProduct(int id) async {
+  Future<void> deleteProduct(String id) async {
     await localDataSource.deleteProduct(id);
 
     // Intentar sincronizar con remoto

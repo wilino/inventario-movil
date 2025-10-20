@@ -123,8 +123,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading());
     try {
-      final user =
-          await signUpUseCase(event.email, event.password, event.fullName);
+      final user = await signUpUseCase(
+        event.email,
+        event.password,
+        event.fullName,
+      );
       emit(AuthAuthenticated(user));
     } catch (e) {
       emit(AuthError(e.toString()));

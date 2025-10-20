@@ -25,11 +25,11 @@ class _LoginPageState extends State<LoginPage> {
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthBloc>().add(
-            AuthSignInRequested(
-              _emailController.text.trim(),
-              _passwordController.text,
-            ),
-          );
+        AuthSignInRequested(
+          _emailController.text.trim(),
+          _passwordController.text,
+        ),
+      );
     }
   }
 
@@ -95,8 +95,9 @@ class _LoginPageState extends State<LoginPage> {
                           if (value == null || value.isEmpty) {
                             return 'Ingresa tu email';
                           }
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                              .hasMatch(value)) {
+                          if (!RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          ).hasMatch(value)) {
                             return 'Email inválido';
                           }
                           return null;
@@ -176,7 +177,8 @@ class _LoginPageState extends State<LoginPage> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
-                                        'Recuperación de contraseña por implementar'),
+                                      'Recuperación de contraseña por implementar',
+                                    ),
                                   ),
                                 );
                               },

@@ -196,14 +196,21 @@ class SyncService {
             .into(db.products)
             .insertOnConflictUpdate(
               ProductsCompanion.insert(
-                id: product['id'],
-                name: product['name'],
-                description: Value(product['description']),
-                category: Value(product['category']),
-                sku: Value(product['sku']),
-                createdAt: DateTime.parse(product['created_at']),
-                updatedAt: DateTime.parse(product['updated_at']),
-                isDeleted: Value(product['is_deleted'] ?? false),
+                id: product['id'] as String,
+                sku: product['sku'] as String,
+                name: product['name'] as String,
+                description: Value(product['description'] as String?),
+                category: product['category'] as String,
+                costPrice: (product['cost_price'] as num).toDouble(),
+                salePrice: (product['sale_price'] as num).toDouble(),
+                unit: product['unit'] as String,
+                hasVariants: Value(product['has_variants'] as bool? ?? false),
+                isActive: Value(product['is_active'] as bool? ?? true),
+                createdAt: DateTime.parse(product['created_at'] as String),
+                updatedAt: DateTime.parse(product['updated_at'] as String),
+                deletedAt: Value(product['deleted_at'] != null
+                    ? DateTime.parse(product['deleted_at'] as String)
+                    : null),
               ),
             );
       }

@@ -24,7 +24,7 @@ class ProductLocalDataSource {
   }
 
   /// Obtener producto por ID
-  Future<domain.Product?> getProductById(int id) async {
+  Future<domain.Product?> getProductById(String id) async {
     final query = database.select(database.products)
       ..where((tbl) => tbl.id.equals(id));
     final result = await query.getSingleOrNull();
@@ -42,27 +42,30 @@ class ProductLocalDataSource {
   /// Buscar productos
   Future<List<domain.Product>> searchProducts(String query) async {
     final searchQuery = '%${query.toLowerCase()}%';
-    final results = await (database.select(database.products)
-          ..where((tbl) =>
-              (tbl.name.lower().like(searchQuery) |
-                  tbl.sku.lower().like(searchQuery)) &
-              tbl.deletedAt.isNull()))
-        .get();
+    final results =
+        await (database.select(database.products)..where(
+              (tbl) =>
+                  (tbl.name.lower().like(searchQuery) |
+                      tbl.sku.lower().like(searchQuery)) &
+                  tbl.deletedAt.isNull(),
+            ))
+            .get();
     return results.map(_mapToEntity).toList();
   }
 
   /// Obtener productos por categoría
   Future<List<domain.Product>> getProductsByCategory(String category) async {
     final query = database.select(database.products)
-      ..where((tbl) =>
-          tbl.category.equals(category) & tbl.deletedAt.isNull());
+      ..where((tbl) => tbl.category.equals(category) & tbl.deletedAt.isNull());
     final results = await query.get();
     return results.map(_mapToEntity).toList();
   }
 
   /// Crear producto
   Future<domain.Product> createProduct(domain.Product product) async {
+    final now = DateTime.now();
     final companion = ProductsCompanion.insert(
+      id: product.id,
       sku: product.sku,
       name: product.name,
       description: Value(product.description),
@@ -72,18 +75,18 @@ class ProductLocalDataSource {
       unit: product.unit,
       hasVariants: Value(product.hasVariants),
       isActive: Value(product.isActive),
-      createdAt: Value(DateTime.now()),
-      updatedAt: Value(DateTime.now()),
+      createdAt: now,
+      updatedAt: now,
     );
 
-    final id = await database.into(database.products).insert(companion);
-    return product.copyWith(id: id, createdAt: DateTime.now(), updatedAt: DateTime.now());
+    await database.into(database.products).insert(companion);
+    return product.copyWith(createdAt: now, updatedAt: now);
   }
 
   /// Actualizar producto
   Future<domain.Product> updateProduct(domain.Product product) async {
     final companion = ProductsCompanion(
-      id: Value(product.id!),
+      id: Value(product.id),
       sku: Value(product.sku),
       name: Value(product.name),
       description: Value(product.description),
@@ -101,8 +104,9 @@ class ProductLocalDataSource {
   }
 
   /// Eliminar producto (soft delete)
-  Future<void> deleteProduct(int id) async {
-    await (database.update(database.products)..where((tbl) => tbl.id.equals(id)))
+  Future<void> deleteProduct(String id) async {
+    await (database.update(database.products)
+          ..where((tbl) => tbl.id.equals(id)))
         .write(ProductsCompanion(deletedAt: Value(DateTime.now())));
   }
 
@@ -135,6 +139,7 @@ class ProductLocalDataSource {
       isActive: row.isActive,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
+      isDeleted: row.deletedAt != null,
     );
   }
 }

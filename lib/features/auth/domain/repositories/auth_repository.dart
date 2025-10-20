@@ -21,10 +21,7 @@ abstract class AuthRepository {
   Future<void> resetPassword(String email);
 
   /// Actualizar perfil de usuario
-  Future<User> updateProfile({
-    String? fullName,
-    String? avatarUrl,
-  });
+  Future<User> updateProfile({String? fullName, String? avatarUrl});
 
   /// Stream de cambios de sesión
   Stream<User?> get authStateChanges;

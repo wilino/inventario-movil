@@ -70,18 +70,18 @@ class Product extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        sku,
-        name,
-        description,
-        category,
-        costPrice,
-        salePrice,
-        unit,
-        hasVariants,
-        isActive,
-        createdAt,
-        updatedAt,
-        isDeleted,
-      ];
+    id,
+    sku,
+    name,
+    description,
+    category,
+    costPrice,
+    salePrice,
+    unit,
+    hasVariants,
+    isActive,
+    createdAt,
+    updatedAt,
+    isDeleted,
+  ];
 }

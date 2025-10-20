@@ -16,9 +16,7 @@ class ProductRemoteDataSource {
           .isFilter('deleted_at', null)
           .order('name');
 
-      return (response as List)
-          .map((json) => _mapFromJson(json))
-          .toList();
+      return (response as List).map((json) => _mapFromJson(json)).toList();
     } catch (e) {
       throw Exception('Error al obtener productos: $e');
     }
@@ -34,16 +32,14 @@ class ProductRemoteDataSource {
           .isFilter('deleted_at', null)
           .order('name');
 
-      return (response as List)
-          .map((json) => _mapFromJson(json))
-          .toList();
+      return (response as List).map((json) => _mapFromJson(json)).toList();
     } catch (e) {
       throw Exception('Error al obtener productos activos: $e');
     }
   }
 
   /// Obtener producto por ID
-  Future<domain.Product?> getProductById(int id) async {
+  Future<domain.Product?> getProductById(String id) async {
     try {
       final response = await client
           .from('products')
@@ -79,7 +75,7 @@ class ProductRemoteDataSource {
       final response = await client
           .from('products')
           .update(_mapToJson(product))
-          .eq('id', product.id!)
+          .eq('id', product.id)
           .select()
           .single();
 
@@ -90,7 +86,7 @@ class ProductRemoteDataSource {
   }
 
   /// Eliminar producto
-  Future<void> deleteProduct(int id) async {
+  Future<void> deleteProduct(String id) async {
     try {
       await client
           .from('products')
@@ -104,7 +100,7 @@ class ProductRemoteDataSource {
   /// Mapear de JSON a entidad
   domain.Product _mapFromJson(Map<String, dynamic> json) {
     return domain.Product(
-      id: json['id'] as int,
+      id: json['id'] as String,
       sku: json['sku'] as String,
       name: json['name'] as String,
       description: json['description'] as String?,
@@ -116,13 +112,14 @@ class ProductRemoteDataSource {
       isActive: json['is_active'] as bool? ?? true,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      isDeleted: json['deleted_at'] != null,
     );
   }
 
   /// Mapear de entidad a JSON
   Map<String, dynamic> _mapToJson(domain.Product product) {
     return {
-      if (product.id != null) 'id': product.id,
+      'id': product.id,
       'sku': product.sku,
       'name': product.name,
       'description': product.description,
