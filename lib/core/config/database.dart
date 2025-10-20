@@ -114,19 +114,36 @@ class Purchases extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Tabla de Ventas
+/// Tabla de Ventas (encabezado)
 class Sales extends Table {
   TextColumn get id => text()();
   TextColumn get storeId => text()();
-  TextColumn get productId => text()();
-  TextColumn get variantId => text().nullable()();
-  IntColumn get qty => integer()();
-  RealColumn get unitPrice => real().nullable()();
-  DateTimeColumn get at => dateTime()();
-  TextColumn get customer => text().nullable()();
   TextColumn get authorUserId => text()();
+  RealColumn get subtotal => real()();
+  RealColumn get discount => real().withDefault(const Constant(0))();
+  RealColumn get tax => real().withDefault(const Constant(0))();
+  RealColumn get total => real()();
+  TextColumn get customer => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get at => dateTime()();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
+  BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Tabla de Items de Venta (detalle)
+class SaleItems extends Table {
+  TextColumn get id => text()();
+  TextColumn get saleId => text()();
+  TextColumn get productId => text()();
+  TextColumn get variantId => text().nullable()();
+  TextColumn get productName => text()();
+  RealColumn get qty => real()();
+  RealColumn get unitPrice => real()();
+  RealColumn get total => real()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -171,6 +188,7 @@ class PendingOps extends Table {
     InventoryAdjustments,
     Purchases,
     Sales,
+    SaleItems,
     Transfers,
     PendingOps,
   ],
@@ -179,14 +197,18 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
-  
+  int get schemaVersion => 3;
+
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (migrator, from, to) async {
       if (from < 2) {
-        // Migrar de IntColumn a RealColumn para stockQty, minQty, maxQty
         await migrator.createTable(inventoryAdjustments);
+      }
+      if (from < 3) {
+        // Migrar tabla Sales al nuevo formato y crear SaleItems
+        await migrator.createTable(saleItems);
+        // Nota: En producción deberías migrar los datos existentes
       }
     },
   );
