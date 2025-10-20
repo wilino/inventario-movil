@@ -38,6 +38,17 @@ import '../../features/transfers/domain/usecases/get_store_transfers_usecase.dar
 import '../../features/transfers/domain/usecases/get_transfers_stats_usecase.dart';
 import '../../features/transfers/presentation/bloc/transfer_bloc.dart';
 
+// Reports
+import '../../features/reports/data/datasources/report_local_datasource.dart';
+import '../../features/reports/data/datasources/report_remote_datasource.dart';
+import '../../features/reports/data/repositories/report_repository_impl.dart';
+import '../../features/reports/domain/repositories/report_repository.dart';
+import '../../features/reports/domain/usecases/get_dashboard_usecase.dart';
+import '../../features/reports/domain/usecases/get_sales_report_usecase.dart';
+import '../../features/reports/domain/usecases/get_purchases_report_usecase.dart';
+import '../../features/reports/domain/usecases/get_inventory_report_usecase.dart';
+import '../../features/reports/presentation/bloc/report_bloc.dart';
+
 final GetIt getIt = GetIt.instance;
 
 /// Configura las dependencias de la aplicación
@@ -203,6 +214,53 @@ void _setupTransfersModule() {
       getStoreTransfersUseCase: getIt<GetStoreTransfersUseCase>(),
       getPendingTransfersUseCase: getIt<GetPendingTransfersUseCase>(),
       getTransfersStatsUseCase: getIt<GetTransfersStatsUseCase>(),
+    ),
+  );
+
+  // === REPORTS MODULE ===
+  
+  // Data sources
+  getIt.registerLazySingleton<ReportLocalDataSource>(
+    () => ReportLocalDataSource(getIt<AppDatabase>()),
+  );
+  
+  getIt.registerLazySingleton<ReportRemoteDataSource>(
+    () => ReportRemoteDataSource(getIt<SupabaseClient>()),
+  );
+  
+  // Repository
+  getIt.registerLazySingleton<ReportRepository>(
+    () => ReportRepositoryImpl(
+      getIt<ReportLocalDataSource>(),
+      getIt<ReportRemoteDataSource>(),
+    ),
+  );
+  
+  // Use cases
+  getIt.registerLazySingleton(
+    () => GetDashboardUseCase(getIt<ReportRepository>()),
+  );
+  
+  getIt.registerLazySingleton(
+    () => GetSalesReportUseCase(getIt<ReportRepository>()),
+  );
+  
+  getIt.registerLazySingleton(
+    () => GetPurchasesReportUseCase(getIt<ReportRepository>()),
+  );
+  
+  getIt.registerLazySingleton(
+    () => GetInventoryReportUseCase(getIt<ReportRepository>()),
+  );
+  
+  // BLoC
+  getIt.registerFactory(
+    () => ReportBloc(
+      getDashboardUseCase: getIt<GetDashboardUseCase>(),
+      getSalesReportUseCase: getIt<GetSalesReportUseCase>(),
+      getPurchasesReportUseCase: getIt<GetPurchasesReportUseCase>(),
+      getInventoryReportUseCase: getIt<GetInventoryReportUseCase>(),
+      reportRepository: getIt<ReportRepository>(),
     ),
   );
 }
