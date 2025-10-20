@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:inventario_app/core/error/failures.dart';
-import 'package:inventario_app/features/reports/domain/entities/report.dart';
+import '../../../../core/errors/failures.dart';
+import '../../domain/entities/report.dart';
 
 /// Estados del BLoC de Reportes
 abstract class ReportState extends Equatable {

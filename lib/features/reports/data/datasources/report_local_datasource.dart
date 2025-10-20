@@ -349,7 +349,8 @@ class ReportLocalDataSource {
 
     final suppliers = <String, Map<String, dynamic>>{};
     for (final purchase in purchases) {
-      final key = purchase.supplierId;
+      final key = purchase.supplierId ?? '';
+      if (key.isEmpty) continue; // Skip if no supplier
       if (suppliers.containsKey(key)) {
         suppliers[key]!['count'] += 1;
         suppliers[key]!['total'] += purchase.total;

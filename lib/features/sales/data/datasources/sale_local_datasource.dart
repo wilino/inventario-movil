@@ -80,7 +80,7 @@ class SaleLocalDataSource {
             SalesCompanion.insert(
               id: sale.id,
               storeId: sale.storeId,
-              authorUserId: sale.authorUserId,
+              authorUserId: Value(sale.authorUserId),
               subtotal: sale.subtotal,
               discount: Value(sale.discount),
               tax: Value(sale.tax),

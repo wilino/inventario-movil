@@ -10,6 +10,8 @@ class PurchaseLocalDataSource {
 
   /// Obtiene todas las compras de una tienda
   Future<List<domain.Purchase>> getStorePurchases(String storeId) async {
+    print('🔍 [PurchaseLocalDS] Consultando compras para storeId: $storeId');
+
     final purchases =
         await (db.select(db.purchases)
               ..where(
@@ -17,6 +19,17 @@ class PurchaseLocalDataSource {
               )
               ..orderBy([(t) => OrderingTerm.desc(t.at)]))
             .get();
+
+    print('📊 [PurchaseLocalDS] Query retornó ${purchases.length} compras');
+
+    // Verificar todas las compras en la BD sin filtro
+    final allPurchases = await db.select(db.purchases).get();
+    print(
+      '📊 [PurchaseLocalDS] Total compras en BD (sin filtro): ${allPurchases.length}',
+    );
+    for (var p in allPurchases) {
+      print('  - ID: ${p.id}, Store: ${p.storeId}, Deleted: ${p.isDeleted}');
+    }
 
     return Future.wait(purchases.map((purchase) => _mapToEntity(purchase)));
   }
@@ -99,9 +112,9 @@ class PurchaseLocalDataSource {
             PurchasesCompanion.insert(
               id: purchase.id,
               storeId: purchase.storeId,
-              supplierId: purchase.supplierId,
+              supplierId: Value(purchase.supplierId),
               supplierName: purchase.supplierName,
-              authorUserId: purchase.authorUserId,
+              authorUserId: Value(purchase.authorUserId),
               subtotal: purchase.subtotal,
               discount: Value(purchase.discount),
               tax: Value(purchase.tax),

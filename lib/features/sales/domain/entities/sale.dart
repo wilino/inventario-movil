@@ -2,7 +2,7 @@
 class Sale {
   final String id;
   final String storeId;
-  final String authorUserId;
+  final String? authorUserId;
   final List<SaleItem> items;
   final double subtotal;
   final double discount;
@@ -18,7 +18,7 @@ class Sale {
   const Sale({
     required this.id,
     required this.storeId,
-    required this.authorUserId,
+    this.authorUserId,
     required this.items,
     required this.subtotal,
     required this.discount,

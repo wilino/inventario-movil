@@ -34,8 +34,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MainNavigation(
-        storeId: 'store_001', // TODO: Obtener de autenticación/sesión
+      home: MainNavigation(
+        storeId:
+            '11111111-1111-1111-1111-111111111111', // Tienda Central - La Paz (tiene ventas y transferencias)
       ),
     );
   }

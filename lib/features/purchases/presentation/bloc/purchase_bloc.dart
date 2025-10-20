@@ -177,6 +177,8 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     LoadPurchasesStats event,
     Emitter<PurchaseState> emit,
   ) async {
+    emit(PurchaseLoading()); // Emitir loading al inicio
+
     // Cargar compras primero
     final purchasesResult = await getStorePurchasesUseCase(event.storeId);
 
@@ -197,6 +199,7 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
       return;
     }
 
+    // Emitir el estado con compras Y estadísticas
     emit(
       PurchasesLoaded(
         purchasesResult.valueOrNull!,

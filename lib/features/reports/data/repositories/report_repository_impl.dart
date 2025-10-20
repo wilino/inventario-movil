@@ -1,9 +1,9 @@
-import 'package:inventario_app/core/error/failures.dart';
-import 'package:inventario_app/core/utils/result.dart';
-import 'package:inventario_app/features/reports/data/datasources/report_local_datasource.dart';
-import 'package:inventario_app/features/reports/data/datasources/report_remote_datasource.dart';
-import 'package:inventario_app/features/reports/domain/entities/report.dart';
-import 'package:inventario_app/features/reports/domain/repositories/report_repository.dart';
+import '../../../../core/errors/failures.dart';
+import '../../../../core/utils/result.dart';
+import '../datasources/report_local_datasource.dart';
+import '../datasources/report_remote_datasource.dart';
+import '../../domain/entities/report.dart';
+import '../../domain/repositories/report_repository.dart';
 
 /// Implementación del repositorio de reportes
 ///
@@ -24,14 +24,15 @@ class ReportRepositoryImpl implements ReportRepository {
   }) async {
     try {
       final dashboard = await _localDataSource.getDashboard(
-        storeId,
-        startDate ?? DateTime.now().subtract(const Duration(days: 30)),
-        endDate ?? DateTime.now(),
+        storeId: storeId,
+        startDate:
+            startDate ?? DateTime.now().subtract(const Duration(days: 30)),
+        endDate: endDate ?? DateTime.now(),
       );
       return Success(dashboard);
     } catch (e) {
       return Error(
-        DatabaseFailure('Error al generar dashboard: ${e.toString()}'),
+        CacheFailure(message: 'Error al generar dashboard: ${e.toString()}'),
       );
     }
   }
@@ -44,14 +45,16 @@ class ReportRepositoryImpl implements ReportRepository {
   }) async {
     try {
       final report = await _localDataSource.getSalesReport(
-        storeId,
-        startDate,
-        endDate,
+        storeId: storeId,
+        startDate: startDate,
+        endDate: endDate,
       );
       return Success(report);
     } catch (e) {
       return Error(
-        DatabaseFailure('Error al generar reporte de ventas: ${e.toString()}'),
+        CacheFailure(
+          message: 'Error al generar reporte de ventas: ${e.toString()}',
+        ),
       );
     }
   }
@@ -64,14 +67,16 @@ class ReportRepositoryImpl implements ReportRepository {
   }) async {
     try {
       final report = await _localDataSource.getPurchasesReport(
-        storeId,
-        startDate,
-        endDate,
+        storeId: storeId,
+        startDate: startDate,
+        endDate: endDate,
       );
       return Success(report);
     } catch (e) {
       return Error(
-        DatabaseFailure('Error al generar reporte de compras: ${e.toString()}'),
+        CacheFailure(
+          message: 'Error al generar reporte de compras: ${e.toString()}',
+        ),
       );
     }
   }
@@ -81,12 +86,14 @@ class ReportRepositoryImpl implements ReportRepository {
     required String storeId,
   }) async {
     try {
-      final report = await _localDataSource.getInventoryReport(storeId);
+      final report = await _localDataSource.getInventoryReport(
+        storeId: storeId,
+      );
       return Success(report);
     } catch (e) {
       return Error(
-        DatabaseFailure(
-          'Error al generar reporte de inventario: ${e.toString()}',
+        CacheFailure(
+          message: 'Error al generar reporte de inventario: ${e.toString()}',
         ),
       );
     }
@@ -100,15 +107,15 @@ class ReportRepositoryImpl implements ReportRepository {
   }) async {
     try {
       final report = await _localDataSource.getTransfersReport(
-        storeId,
-        startDate,
-        endDate,
+        storeId: storeId,
+        startDate: startDate,
+        endDate: endDate,
       );
       return Success(report);
     } catch (e) {
       return Error(
-        DatabaseFailure(
-          'Error al generar reporte de traslados: ${e.toString()}',
+        CacheFailure(
+          message: 'Error al generar reporte de traslados: ${e.toString()}',
         ),
       );
     }
@@ -126,7 +133,9 @@ class ReportRepositoryImpl implements ReportRepository {
       final filePath = '/storage/reports/${reportType}_$timestamp.pdf';
       return Success(filePath);
     } catch (e) {
-      return Error(DatabaseFailure('Error al exportar PDF: ${e.toString()}'));
+      return Error(
+        CacheFailure(message: 'Error al exportar PDF: ${e.toString()}'),
+      );
     }
   }
 
@@ -142,7 +151,9 @@ class ReportRepositoryImpl implements ReportRepository {
       final filePath = '/storage/reports/${reportType}_$timestamp.xlsx';
       return Success(filePath);
     } catch (e) {
-      return Error(DatabaseFailure('Error al exportar Excel: ${e.toString()}'));
+      return Error(
+        CacheFailure(message: 'Error al exportar Excel: ${e.toString()}'),
+      );
     }
   }
 }

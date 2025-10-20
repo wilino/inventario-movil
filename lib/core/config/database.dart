@@ -118,9 +118,9 @@ class Suppliers extends Table {
 class Purchases extends Table {
   TextColumn get id => text()();
   TextColumn get storeId => text()();
-  TextColumn get supplierId => text()();
+  TextColumn get supplierId => text().nullable()();
   TextColumn get supplierName => text()();
-  TextColumn get authorUserId => text()();
+  TextColumn get authorUserId => text().nullable()();
   RealColumn get subtotal => real()();
   RealColumn get discount => real().withDefault(const Constant(0))();
   RealColumn get tax => real().withDefault(const Constant(0))();
@@ -155,7 +155,7 @@ class PurchaseItems extends Table {
 class Sales extends Table {
   TextColumn get id => text()();
   TextColumn get storeId => text()();
-  TextColumn get authorUserId => text()();
+  TextColumn get authorUserId => text().nullable()();
   RealColumn get subtotal => real()();
   RealColumn get discount => real().withDefault(const Constant(0))();
   RealColumn get tax => real().withDefault(const Constant(0))();

@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:inventario_app/core/config/dependency_injection.dart';
-import 'package:inventario_app/core/services/connectivity_service.dart';
-import 'package:inventario_app/core/services/sync_service.dart';
-import 'package:inventario_app/features/reports/presentation/pages/dashboard_page.dart';
-import 'package:inventario_app/features/sales/presentation/pages/sales_history_page.dart';
-import 'package:inventario_app/features/purchases/presentation/pages/purchases_history_page.dart';
-import 'package:inventario_app/features/inventory/presentation/pages/inventory_dashboard_page.dart';
-import 'package:inventario_app/features/transfers/presentation/pages/transfers_history_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../config/dependency_injection.dart';
+import '../services/connectivity_service.dart';
+import '../services/sync_service.dart';
+import '../../features/reports/presentation/pages/dashboard_page.dart';
+import '../../features/sales/presentation/pages/sales_history_page.dart';
+import '../../features/sales/presentation/pages/new_sale_page.dart';
+import '../../features/sales/presentation/bloc/sale_bloc.dart';
+import '../../features/purchases/presentation/pages/purchases_history_page.dart';
+import '../../features/purchases/presentation/pages/new_purchase_page.dart';
+import '../../features/purchases/presentation/bloc/purchase_bloc.dart';
+import '../../features/inventory/presentation/pages/inventory_dashboard_page.dart';
+import '../../features/inventory/presentation/bloc/inventory_bloc.dart';
+import '../../features/transfers/presentation/pages/transfers_history_page.dart';
 
 /// Navegación principal de la aplicación con BottomNavigationBar
 class MainNavigation extends StatefulWidget {
   final String storeId;
 
-  const MainNavigation({
-    super.key,
-    required this.storeId,
-  });
+  const MainNavigation({super.key, required this.storeId});
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();
@@ -38,7 +41,10 @@ class _MainNavigationState extends State<MainNavigation> {
       DashboardPage(storeId: widget.storeId),
       SalesHistoryPage(storeId: widget.storeId),
       PurchasesHistoryPage(storeId: widget.storeId),
-      InventoryDashboardPage(storeId: widget.storeId),
+      BlocProvider(
+        create: (_) => getIt<InventoryBloc>(),
+        child: InventoryDashboardPage(storeId: widget.storeId),
+      ),
       TransfersHistoryPage(storeId: widget.storeId),
     ];
 
@@ -69,10 +75,7 @@ class _MainNavigationState extends State<MainNavigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (index) {
@@ -120,13 +123,14 @@ class _MainNavigationState extends State<MainNavigation> {
 
     switch (_currentIndex) {
       case 0: // Dashboard
-        if (!_isOnline) return null; // No mostrar FAB si no hay conexión para sync
+        if (!_isOnline)
+          return null; // No mostrar FAB si no hay conexión para sync
         icon = Icons.sync;
         tooltip = 'Sincronizar';
         onPressed = () async {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('🔄 Sincronizando...')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('🔄 Sincronizando...')));
           await _syncService.forceSyncNow();
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -143,10 +147,20 @@ class _MainNavigationState extends State<MainNavigation> {
         icon = Icons.add_shopping_cart;
         tooltip = 'Nueva Venta';
         onPressed = () {
-          // TODO: Navegar a NewSalePage
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Nueva venta - próximamente')),
-          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                create: (_) => getIt<SaleBloc>(),
+                child: NewSalePage(storeId: widget.storeId),
+              ),
+            ),
+          ).then((result) {
+            if (result == true) {
+              // Refrescar la lista de ventas
+              setState(() {});
+            }
+          });
         };
         break;
 
@@ -154,10 +168,20 @@ class _MainNavigationState extends State<MainNavigation> {
         icon = Icons.add_shopping_cart;
         tooltip = 'Nueva Compra';
         onPressed = () {
-          // TODO: Navegar a NewPurchasePage
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Nueva compra - próximamente')),
-          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                create: (_) => getIt<PurchaseBloc>(),
+                child: NewPurchasePage(storeId: widget.storeId),
+              ),
+            ),
+          ).then((result) {
+            if (result == true) {
+              // Refrescar la lista de compras
+              setState(() {});
+            }
+          });
         };
         break;
 
@@ -165,7 +189,7 @@ class _MainNavigationState extends State<MainNavigation> {
         icon = Icons.add;
         tooltip = 'Ajustar Inventario';
         onPressed = () {
-          // TODO: Navegar a ajuste de inventario
+          // TODO: Implementar página de ajuste de inventario
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Ajuste de inventario - próximamente')),
           );

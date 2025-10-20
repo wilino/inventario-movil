@@ -137,6 +137,7 @@ class _InventoryDashboardPageState extends State<InventoryDashboardPage> {
     final qtyController = TextEditingController(text: item.stockQty.toString());
     String adjustType = 'set';
     final reasonController = TextEditingController();
+    final bloc = context.read<InventoryBloc>();
 
     showDialog(
       context: context,
@@ -187,7 +188,7 @@ class _InventoryDashboardPageState extends State<InventoryDashboardPage> {
           FilledButton(
             onPressed: () {
               final newQty = double.tryParse(qtyController.text) ?? 0;
-              context.read<InventoryBloc>().add(
+              bloc.add(
                 InventoryAdjustRequested(
                   AdjustInventoryParams(
                     inventoryId: item.id,
@@ -213,102 +214,112 @@ class _InventoryDashboardPageState extends State<InventoryDashboardPage> {
 
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Historial de Ajustes'),
-        content: SizedBox(
-          width: double.maxFinite,
-          height: 400,
-          child: BlocBuilder<InventoryBloc, InventoryState>(
-            builder: (context, state) {
-              if (state is InventoryHistoryLoaded) {
-                return ListView.builder(
-                  itemCount: state.history.length,
-                  itemBuilder: (context, index) {
-                    final adj = state.history[index];
-                    return ListTile(
-                      leading: Icon(
-                        adj.type == 'increment'
-                            ? Icons.arrow_upward
-                            : adj.type == 'decrement'
-                            ? Icons.arrow_downward
-                            : Icons.edit,
-                        color: adj.type == 'increment'
-                            ? Colors.green
-                            : adj.type == 'decrement'
-                            ? Colors.red
-                            : Colors.blue,
-                      ),
-                      title: Text(
-                        '${adj.previousQty} → ${adj.newQty} (${adj.adjustmentQty >= 0 ? '+' : ''}${adj.adjustmentQty})',
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (adj.reason != null) Text('Motivo: ${adj.reason}'),
-                          Text(
-                            adj.createdAt.toString().substring(0, 16),
-                            style: const TextStyle(fontSize: 11),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
+      builder: (dialogContext) => BlocProvider.value(
+        value: context.read<InventoryBloc>(),
+        child: AlertDialog(
+          title: const Text('Historial de Ajustes'),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: BlocBuilder<InventoryBloc, InventoryState>(
+              builder: (context, state) {
+                if (state is InventoryHistoryLoaded) {
+                  return ListView.builder(
+                    itemCount: state.history.length,
+                    itemBuilder: (context, index) {
+                      final adj = state.history[index];
+                      return ListTile(
+                        leading: Icon(
+                          adj.type == 'increment'
+                              ? Icons.arrow_upward
+                              : adj.type == 'decrement'
+                              ? Icons.arrow_downward
+                              : Icons.edit,
+                          color: adj.type == 'increment'
+                              ? Colors.green
+                              : adj.type == 'decrement'
+                              ? Colors.red
+                              : Colors.blue,
+                        ),
+                        title: Text(
+                          '${adj.previousQty} → ${adj.newQty} (${adj.adjustmentQty >= 0 ? '+' : ''}${adj.adjustmentQty})',
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (adj.reason != null)
+                              Text('Motivo: ${adj.reason}'),
+                            Text(
+                              adj.createdAt.toString().substring(0, 16),
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cerrar'),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cerrar'),
-          ),
-        ],
       ),
     );
   }
 
   void _showStatsDialog() {
+    // Cargar estadísticas antes de mostrar el diálogo
+    context.read<InventoryBloc>().add(InventoryStatsRequested(widget.storeId));
+
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Estadísticas de Inventario'),
-        content: BlocBuilder<InventoryBloc, InventoryState>(
-          builder: (context, state) {
-            if (state is InventoryStatsLoaded) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _StatRow(
-                    icon: Icons.inventory,
-                    label: 'Total Productos',
-                    value: state.stats['totalProducts'].toString(),
-                  ),
-                  _StatRow(
-                    icon: Icons.warning,
-                    label: 'Stock Bajo',
-                    value: state.stats['lowStockItems'].toString(),
-                    color: Colors.orange,
-                  ),
-                  _StatRow(
-                    icon: Icons.error,
-                    label: 'Agotados',
-                    value: state.stats['outOfStockItems'].toString(),
-                    color: Colors.red,
-                  ),
-                ],
-              );
-            }
-            return const Center(child: CircularProgressIndicator());
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cerrar'),
+      builder: (dialogContext) => BlocProvider.value(
+        value: context.read<InventoryBloc>(),
+        child: AlertDialog(
+          title: const Text('Estadísticas de Inventario'),
+          content: BlocBuilder<InventoryBloc, InventoryState>(
+            builder: (context, state) {
+              if (state is InventoryStatsLoaded) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _StatRow(
+                      icon: Icons.inventory,
+                      label: 'Total Productos',
+                      value: state.stats['totalProducts'].toString(),
+                    ),
+                    _StatRow(
+                      icon: Icons.warning,
+                      label: 'Stock Bajo',
+                      value: state.stats['lowStockItems'].toString(),
+                      color: Colors.orange,
+                    ),
+                    _StatRow(
+                      icon: Icons.error,
+                      label: 'Agotados',
+                      value: state.stats['outOfStockItems'].toString(),
+                      color: Colors.red,
+                    ),
+                  ],
+                );
+              }
+              return const Center(child: CircularProgressIndicator());
+            },
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cerrar'),
+            ),
+          ],
+        ),
       ),
     );
   }

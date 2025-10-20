@@ -16,14 +16,26 @@ class PurchaseRepositoryImpl implements PurchaseRepository {
   @override
   Future<Result<List<Purchase>>> getStorePurchases(String storeId) async {
     try {
+      print('🔍 [PurchaseRepo] Buscando compras para storeId: $storeId');
+
       // Offline-First: retornar datos locales
       final purchases = await local.getStorePurchases(storeId);
+
+      print(
+        '📦 [PurchaseRepo] Encontradas ${purchases.length} compras en local',
+      );
+      for (var p in purchases) {
+        print(
+          '  - Compra: ${p.id}, Proveedor: ${p.supplierName}, Total: ${p.total}',
+        );
+      }
 
       // Intentar sincronizar en segundo plano (sin esperar)
       _syncPurchasesInBackground(storeId);
 
       return Success(purchases);
     } catch (e) {
+      print('❌ [PurchaseRepo] Error: $e');
       return Error(CacheFailure(message: 'Error al obtener compras locales'));
     }
   }

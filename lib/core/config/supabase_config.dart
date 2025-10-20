@@ -9,11 +9,12 @@ class SupabaseConfig {
     await Supabase.initialize(
       url: const String.fromEnvironment(
         'SUPABASE_URL',
-        defaultValue: '', // TODO: Agregar URL por defecto o configurar en .env
+        defaultValue: 'https://ywgxdgblymmnmgjvivvh.supabase.co',
       ),
       anonKey: const String.fromEnvironment(
         'SUPABASE_ANON_KEY',
-        defaultValue: '', // TODO: Agregar KEY por defecto o configurar en .env
+        defaultValue:
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Z3hkZ2JseW1tbm1nanZpdnZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4ODg0NDYsImV4cCI6MjA3NjQ2NDQ0Nn0.uKdmmA6n7oAzYn-ZoMv94NNajR9I_QOiNMbQHhZOYmQ',
       ),
     );
     _client = Supabase.instance.client;

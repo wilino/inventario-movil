@@ -1,12 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inventario_app/core/utils/result.dart';
-import 'package:inventario_app/features/reports/domain/usecases/get_dashboard_usecase.dart';
-import 'package:inventario_app/features/reports/domain/usecases/get_inventory_report_usecase.dart';
-import 'package:inventario_app/features/reports/domain/usecases/get_purchases_report_usecase.dart';
-import 'package:inventario_app/features/reports/domain/usecases/get_sales_report_usecase.dart';
-import 'package:inventario_app/features/reports/domain/repositories/report_repository.dart';
-import 'package:inventario_app/features/reports/presentation/bloc/report_event.dart';
-import 'package:inventario_app/features/reports/presentation/bloc/report_state.dart';
+import '../../../../core/utils/result.dart' as result;
+import '../../domain/usecases/get_dashboard_usecase.dart';
+import '../../domain/usecases/get_inventory_report_usecase.dart';
+import '../../domain/usecases/get_purchases_report_usecase.dart';
+import '../../domain/usecases/get_sales_report_usecase.dart';
+import '../../domain/repositories/report_repository.dart';
+import 'report_event.dart';
+import 'report_state.dart';
 
 /// BLoC para gestión de reportes
 ///
@@ -49,16 +49,16 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
   ) async {
     emit(ReportLoading());
 
-    final result = await _getDashboardUseCase(
+    final res = await _getDashboardUseCase(
       storeId: event.storeId,
       startDate: event.startDate,
       endDate: event.endDate,
     );
 
-    switch (result) {
-      case Success(:final value):
+    switch (res) {
+      case result.Success(:final value):
         emit(DashboardLoaded(value));
-      case Error(:final failure):
+      case result.Error(:final failure):
         emit(ReportError(failure));
     }
   }
@@ -70,16 +70,16 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
   ) async {
     emit(ReportLoading());
 
-    final result = await _getSalesReportUseCase(
+    final res = await _getSalesReportUseCase(
       storeId: event.storeId,
       startDate: event.startDate,
       endDate: event.endDate,
     );
 
-    switch (result) {
-      case Success(:final value):
+    switch (res) {
+      case result.Success(:final value):
         emit(SalesReportLoaded(value));
-      case Error(:final failure):
+      case result.Error(:final failure):
         emit(ReportError(failure));
     }
   }
@@ -91,16 +91,16 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
   ) async {
     emit(ReportLoading());
 
-    final result = await _getPurchasesReportUseCase(
+    final res = await _getPurchasesReportUseCase(
       storeId: event.storeId,
       startDate: event.startDate,
       endDate: event.endDate,
     );
 
-    switch (result) {
-      case Success(:final value):
+    switch (res) {
+      case result.Success(:final value):
         emit(PurchasesReportLoaded(value));
-      case Error(:final failure):
+      case result.Error(:final failure):
         emit(ReportError(failure));
     }
   }
@@ -112,12 +112,12 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
   ) async {
     emit(ReportLoading());
 
-    final result = await _getInventoryReportUseCase(storeId: event.storeId);
+    final res = await _getInventoryReportUseCase(storeId: event.storeId);
 
-    switch (result) {
-      case Success(:final value):
+    switch (res) {
+      case result.Success(:final value):
         emit(InventoryReportLoaded(value));
-      case Error(:final failure):
+      case result.Error(:final failure):
         emit(ReportError(failure));
     }
   }
@@ -129,16 +129,16 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
   ) async {
     emit(ReportLoading());
 
-    final result = await _reportRepository.getTransfersReport(
+    final res = await _reportRepository.getTransfersReport(
       storeId: event.storeId,
       startDate: event.startDate,
       endDate: event.endDate,
     );
 
-    switch (result) {
-      case Success(:final value):
+    switch (res) {
+      case result.Success(:final value):
         emit(TransfersReportLoaded(value));
-      case Error(:final failure):
+      case result.Error(:final failure):
         emit(ReportError(failure));
     }
   }
@@ -148,15 +148,15 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
     ExportToPdf event,
     Emitter<ReportState> emit,
   ) async {
-    final result = await _reportRepository.exportToPdf(
+    final res = await _reportRepository.exportToPdf(
       reportType: event.reportType,
       data: event.data,
     );
 
-    switch (result) {
-      case Success(:final value):
+    switch (res) {
+      case result.Success(:final value):
         emit(ReportExported(filePath: value, format: 'pdf'));
-      case Error(:final failure):
+      case result.Error(:final failure):
         emit(ReportError(failure));
     }
   }
@@ -166,15 +166,15 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
     ExportToExcel event,
     Emitter<ReportState> emit,
   ) async {
-    final result = await _reportRepository.exportToExcel(
+    final res = await _reportRepository.exportToExcel(
       reportType: event.reportType,
       data: event.data,
     );
 
-    switch (result) {
-      case Success(:final value):
+    switch (res) {
+      case result.Success(:final value):
         emit(ReportExported(filePath: value, format: 'excel'));
-      case Error(:final failure):
+      case result.Error(:final failure):
         emit(ReportError(failure));
     }
   }

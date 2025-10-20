@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:inventario_app/core/config/dependency_injection.dart';
-import 'package:inventario_app/features/reports/presentation/bloc/report_bloc.dart';
-import 'package:inventario_app/features/reports/presentation/bloc/report_event.dart';
-import 'package:inventario_app/features/reports/presentation/bloc/report_state.dart';
-import 'package:inventario_app/features/reports/domain/entities/report.dart';
+import '../../../../core/config/dependency_injection.dart';
+import '../bloc/report_bloc.dart';
+import '../bloc/report_event.dart';
+import '../bloc/report_state.dart';
+import '../../domain/entities/report.dart';
+import 'sales_report_page.dart';
+import 'purchases_report_page.dart';
+import 'inventory_report_page.dart';
+import 'transfers_report_page.dart';
 
 /// Página principal del Dashboard con métricas generales
 class DashboardPage extends StatelessWidget {
@@ -101,7 +105,6 @@ class DashboardPage extends StatelessWidget {
       symbol: '\$',
       decimalDigits: 2,
     );
-    final percentFormat = NumberFormat.percentPattern();
 
     return RefreshIndicator(
       onRefresh: () async {
@@ -245,9 +248,11 @@ class DashboardPage extends StatelessWidget {
             Icons.assessment,
             Colors.green,
             () {
-              // TODO: Navegar a SalesReportPage
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Reporte de ventas próximamente')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SalesReportPage(storeId: storeId),
+                ),
               );
             },
           ),
@@ -259,10 +264,10 @@ class DashboardPage extends StatelessWidget {
             Icons.shopping_bag,
             Colors.orange,
             () {
-              // TODO: Navegar a PurchasesReportPage
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Reporte de compras próximamente'),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PurchasesReportPage(storeId: storeId),
                 ),
               );
             },
@@ -275,10 +280,10 @@ class DashboardPage extends StatelessWidget {
             Icons.inventory,
             Colors.blue,
             () {
-              // TODO: Navegar a InventoryReportPage
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Reporte de inventario próximamente'),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => InventoryReportPage(storeId: storeId),
                 ),
               );
             },
@@ -291,10 +296,10 @@ class DashboardPage extends StatelessWidget {
             Icons.local_shipping,
             Colors.purple,
             () {
-              // TODO: Navegar a TransfersReportPage
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Reporte de traslados próximamente'),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => TransfersReportPage(storeId: storeId),
                 ),
               );
             },

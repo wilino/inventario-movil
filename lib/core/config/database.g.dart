@@ -3743,9 +3743,9 @@ class $PurchasesTable extends Purchases
   late final GeneratedColumn<String> supplierId = GeneratedColumn<String>(
     'supplier_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _supplierNameMeta = const VerificationMeta(
     'supplierName',
@@ -3765,9 +3765,9 @@ class $PurchasesTable extends Purchases
   late final GeneratedColumn<String> authorUserId = GeneratedColumn<String>(
     'author_user_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _subtotalMeta = const VerificationMeta(
     'subtotal',
@@ -3925,8 +3925,6 @@ class $PurchasesTable extends Purchases
         _supplierIdMeta,
         supplierId.isAcceptableOrUnknown(data['supplier_id']!, _supplierIdMeta),
       );
-    } else if (isInserting) {
-      context.missing(_supplierIdMeta);
     }
     if (data.containsKey('supplier_name')) {
       context.handle(
@@ -3947,8 +3945,6 @@ class $PurchasesTable extends Purchases
           _authorUserIdMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_authorUserIdMeta);
     }
     if (data.containsKey('subtotal')) {
       context.handle(
@@ -4040,7 +4036,7 @@ class $PurchasesTable extends Purchases
       supplierId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}supplier_id'],
-      )!,
+      ),
       supplierName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}supplier_name'],
@@ -4048,7 +4044,7 @@ class $PurchasesTable extends Purchases
       authorUserId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}author_user_id'],
-      )!,
+      ),
       subtotal: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}subtotal'],
@@ -4101,9 +4097,9 @@ class $PurchasesTable extends Purchases
 class Purchase extends DataClass implements Insertable<Purchase> {
   final String id;
   final String storeId;
-  final String supplierId;
+  final String? supplierId;
   final String supplierName;
-  final String authorUserId;
+  final String? authorUserId;
   final double subtotal;
   final double discount;
   final double tax;
@@ -4117,9 +4113,9 @@ class Purchase extends DataClass implements Insertable<Purchase> {
   const Purchase({
     required this.id,
     required this.storeId,
-    required this.supplierId,
+    this.supplierId,
     required this.supplierName,
-    required this.authorUserId,
+    this.authorUserId,
     required this.subtotal,
     required this.discount,
     required this.tax,
@@ -4136,9 +4132,13 @@ class Purchase extends DataClass implements Insertable<Purchase> {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['store_id'] = Variable<String>(storeId);
-    map['supplier_id'] = Variable<String>(supplierId);
+    if (!nullToAbsent || supplierId != null) {
+      map['supplier_id'] = Variable<String>(supplierId);
+    }
     map['supplier_name'] = Variable<String>(supplierName);
-    map['author_user_id'] = Variable<String>(authorUserId);
+    if (!nullToAbsent || authorUserId != null) {
+      map['author_user_id'] = Variable<String>(authorUserId);
+    }
     map['subtotal'] = Variable<double>(subtotal);
     map['discount'] = Variable<double>(discount);
     map['tax'] = Variable<double>(tax);
@@ -4160,9 +4160,13 @@ class Purchase extends DataClass implements Insertable<Purchase> {
     return PurchasesCompanion(
       id: Value(id),
       storeId: Value(storeId),
-      supplierId: Value(supplierId),
+      supplierId: supplierId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(supplierId),
       supplierName: Value(supplierName),
-      authorUserId: Value(authorUserId),
+      authorUserId: authorUserId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(authorUserId),
       subtotal: Value(subtotal),
       discount: Value(discount),
       tax: Value(tax),
@@ -4188,9 +4192,9 @@ class Purchase extends DataClass implements Insertable<Purchase> {
     return Purchase(
       id: serializer.fromJson<String>(json['id']),
       storeId: serializer.fromJson<String>(json['storeId']),
-      supplierId: serializer.fromJson<String>(json['supplierId']),
+      supplierId: serializer.fromJson<String?>(json['supplierId']),
       supplierName: serializer.fromJson<String>(json['supplierName']),
-      authorUserId: serializer.fromJson<String>(json['authorUserId']),
+      authorUserId: serializer.fromJson<String?>(json['authorUserId']),
       subtotal: serializer.fromJson<double>(json['subtotal']),
       discount: serializer.fromJson<double>(json['discount']),
       tax: serializer.fromJson<double>(json['tax']),
@@ -4209,9 +4213,9 @@ class Purchase extends DataClass implements Insertable<Purchase> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'storeId': serializer.toJson<String>(storeId),
-      'supplierId': serializer.toJson<String>(supplierId),
+      'supplierId': serializer.toJson<String?>(supplierId),
       'supplierName': serializer.toJson<String>(supplierName),
-      'authorUserId': serializer.toJson<String>(authorUserId),
+      'authorUserId': serializer.toJson<String?>(authorUserId),
       'subtotal': serializer.toJson<double>(subtotal),
       'discount': serializer.toJson<double>(discount),
       'tax': serializer.toJson<double>(tax),
@@ -4228,9 +4232,9 @@ class Purchase extends DataClass implements Insertable<Purchase> {
   Purchase copyWith({
     String? id,
     String? storeId,
-    String? supplierId,
+    Value<String?> supplierId = const Value.absent(),
     String? supplierName,
-    String? authorUserId,
+    Value<String?> authorUserId = const Value.absent(),
     double? subtotal,
     double? discount,
     double? tax,
@@ -4244,9 +4248,9 @@ class Purchase extends DataClass implements Insertable<Purchase> {
   }) => Purchase(
     id: id ?? this.id,
     storeId: storeId ?? this.storeId,
-    supplierId: supplierId ?? this.supplierId,
+    supplierId: supplierId.present ? supplierId.value : this.supplierId,
     supplierName: supplierName ?? this.supplierName,
-    authorUserId: authorUserId ?? this.authorUserId,
+    authorUserId: authorUserId.present ? authorUserId.value : this.authorUserId,
     subtotal: subtotal ?? this.subtotal,
     discount: discount ?? this.discount,
     tax: tax ?? this.tax,
@@ -4352,9 +4356,9 @@ class Purchase extends DataClass implements Insertable<Purchase> {
 class PurchasesCompanion extends UpdateCompanion<Purchase> {
   final Value<String> id;
   final Value<String> storeId;
-  final Value<String> supplierId;
+  final Value<String?> supplierId;
   final Value<String> supplierName;
-  final Value<String> authorUserId;
+  final Value<String?> authorUserId;
   final Value<double> subtotal;
   final Value<double> discount;
   final Value<double> tax;
@@ -4387,9 +4391,9 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
   PurchasesCompanion.insert({
     required String id,
     required String storeId,
-    required String supplierId,
+    this.supplierId = const Value.absent(),
     required String supplierName,
-    required String authorUserId,
+    this.authorUserId = const Value.absent(),
     required double subtotal,
     this.discount = const Value.absent(),
     this.tax = const Value.absent(),
@@ -4403,9 +4407,7 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        storeId = Value(storeId),
-       supplierId = Value(supplierId),
        supplierName = Value(supplierName),
-       authorUserId = Value(authorUserId),
        subtotal = Value(subtotal),
        total = Value(total),
        at = Value(at),
@@ -4452,9 +4454,9 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
   PurchasesCompanion copyWith({
     Value<String>? id,
     Value<String>? storeId,
-    Value<String>? supplierId,
+    Value<String?>? supplierId,
     Value<String>? supplierName,
-    Value<String>? authorUserId,
+    Value<String?>? authorUserId,
     Value<double>? subtotal,
     Value<double>? discount,
     Value<double>? tax,
@@ -5113,9 +5115,9 @@ class $SalesTable extends Sales with TableInfo<$SalesTable, Sale> {
   late final GeneratedColumn<String> authorUserId = GeneratedColumn<String>(
     'author_user_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _subtotalMeta = const VerificationMeta(
     'subtotal',
@@ -5274,8 +5276,6 @@ class $SalesTable extends Sales with TableInfo<$SalesTable, Sale> {
           _authorUserIdMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_authorUserIdMeta);
     }
     if (data.containsKey('subtotal')) {
       context.handle(
@@ -5364,7 +5364,7 @@ class $SalesTable extends Sales with TableInfo<$SalesTable, Sale> {
       authorUserId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}author_user_id'],
-      )!,
+      ),
       subtotal: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}subtotal'],
@@ -5417,7 +5417,7 @@ class $SalesTable extends Sales with TableInfo<$SalesTable, Sale> {
 class Sale extends DataClass implements Insertable<Sale> {
   final String id;
   final String storeId;
-  final String authorUserId;
+  final String? authorUserId;
   final double subtotal;
   final double discount;
   final double tax;
@@ -5431,7 +5431,7 @@ class Sale extends DataClass implements Insertable<Sale> {
   const Sale({
     required this.id,
     required this.storeId,
-    required this.authorUserId,
+    this.authorUserId,
     required this.subtotal,
     required this.discount,
     required this.tax,
@@ -5448,7 +5448,9 @@ class Sale extends DataClass implements Insertable<Sale> {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['store_id'] = Variable<String>(storeId);
-    map['author_user_id'] = Variable<String>(authorUserId);
+    if (!nullToAbsent || authorUserId != null) {
+      map['author_user_id'] = Variable<String>(authorUserId);
+    }
     map['subtotal'] = Variable<double>(subtotal);
     map['discount'] = Variable<double>(discount);
     map['tax'] = Variable<double>(tax);
@@ -5470,7 +5472,9 @@ class Sale extends DataClass implements Insertable<Sale> {
     return SalesCompanion(
       id: Value(id),
       storeId: Value(storeId),
-      authorUserId: Value(authorUserId),
+      authorUserId: authorUserId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(authorUserId),
       subtotal: Value(subtotal),
       discount: Value(discount),
       tax: Value(tax),
@@ -5496,7 +5500,7 @@ class Sale extends DataClass implements Insertable<Sale> {
     return Sale(
       id: serializer.fromJson<String>(json['id']),
       storeId: serializer.fromJson<String>(json['storeId']),
-      authorUserId: serializer.fromJson<String>(json['authorUserId']),
+      authorUserId: serializer.fromJson<String?>(json['authorUserId']),
       subtotal: serializer.fromJson<double>(json['subtotal']),
       discount: serializer.fromJson<double>(json['discount']),
       tax: serializer.fromJson<double>(json['tax']),
@@ -5515,7 +5519,7 @@ class Sale extends DataClass implements Insertable<Sale> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'storeId': serializer.toJson<String>(storeId),
-      'authorUserId': serializer.toJson<String>(authorUserId),
+      'authorUserId': serializer.toJson<String?>(authorUserId),
       'subtotal': serializer.toJson<double>(subtotal),
       'discount': serializer.toJson<double>(discount),
       'tax': serializer.toJson<double>(tax),
@@ -5532,7 +5536,7 @@ class Sale extends DataClass implements Insertable<Sale> {
   Sale copyWith({
     String? id,
     String? storeId,
-    String? authorUserId,
+    Value<String?> authorUserId = const Value.absent(),
     double? subtotal,
     double? discount,
     double? tax,
@@ -5546,7 +5550,7 @@ class Sale extends DataClass implements Insertable<Sale> {
   }) => Sale(
     id: id ?? this.id,
     storeId: storeId ?? this.storeId,
-    authorUserId: authorUserId ?? this.authorUserId,
+    authorUserId: authorUserId.present ? authorUserId.value : this.authorUserId,
     subtotal: subtotal ?? this.subtotal,
     discount: discount ?? this.discount,
     tax: tax ?? this.tax,
@@ -5636,7 +5640,7 @@ class Sale extends DataClass implements Insertable<Sale> {
 class SalesCompanion extends UpdateCompanion<Sale> {
   final Value<String> id;
   final Value<String> storeId;
-  final Value<String> authorUserId;
+  final Value<String?> authorUserId;
   final Value<double> subtotal;
   final Value<double> discount;
   final Value<double> tax;
@@ -5667,7 +5671,7 @@ class SalesCompanion extends UpdateCompanion<Sale> {
   SalesCompanion.insert({
     required String id,
     required String storeId,
-    required String authorUserId,
+    this.authorUserId = const Value.absent(),
     required double subtotal,
     this.discount = const Value.absent(),
     this.tax = const Value.absent(),
@@ -5681,7 +5685,6 @@ class SalesCompanion extends UpdateCompanion<Sale> {
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        storeId = Value(storeId),
-       authorUserId = Value(authorUserId),
        subtotal = Value(subtotal),
        total = Value(total),
        at = Value(at),
@@ -5724,7 +5727,7 @@ class SalesCompanion extends UpdateCompanion<Sale> {
   SalesCompanion copyWith({
     Value<String>? id,
     Value<String>? storeId,
-    Value<String>? authorUserId,
+    Value<String?>? authorUserId,
     Value<double>? subtotal,
     Value<double>? discount,
     Value<double>? tax,
@@ -9781,9 +9784,9 @@ typedef $$PurchasesTableCreateCompanionBuilder =
     PurchasesCompanion Function({
       required String id,
       required String storeId,
-      required String supplierId,
+      Value<String?> supplierId,
       required String supplierName,
-      required String authorUserId,
+      Value<String?> authorUserId,
       required double subtotal,
       Value<double> discount,
       Value<double> tax,
@@ -9800,9 +9803,9 @@ typedef $$PurchasesTableUpdateCompanionBuilder =
     PurchasesCompanion Function({
       Value<String> id,
       Value<String> storeId,
-      Value<String> supplierId,
+      Value<String?> supplierId,
       Value<String> supplierName,
-      Value<String> authorUserId,
+      Value<String?> authorUserId,
       Value<double> subtotal,
       Value<double> discount,
       Value<double> tax,
@@ -10079,9 +10082,9 @@ class $$PurchasesTableTableManager
               ({
                 Value<String> id = const Value.absent(),
                 Value<String> storeId = const Value.absent(),
-                Value<String> supplierId = const Value.absent(),
+                Value<String?> supplierId = const Value.absent(),
                 Value<String> supplierName = const Value.absent(),
-                Value<String> authorUserId = const Value.absent(),
+                Value<String?> authorUserId = const Value.absent(),
                 Value<double> subtotal = const Value.absent(),
                 Value<double> discount = const Value.absent(),
                 Value<double> tax = const Value.absent(),
@@ -10115,9 +10118,9 @@ class $$PurchasesTableTableManager
               ({
                 required String id,
                 required String storeId,
-                required String supplierId,
+                Value<String?> supplierId = const Value.absent(),
                 required String supplierName,
-                required String authorUserId,
+                Value<String?> authorUserId = const Value.absent(),
                 required double subtotal,
                 Value<double> discount = const Value.absent(),
                 Value<double> tax = const Value.absent(),
@@ -10434,7 +10437,7 @@ typedef $$SalesTableCreateCompanionBuilder =
     SalesCompanion Function({
       required String id,
       required String storeId,
-      required String authorUserId,
+      Value<String?> authorUserId,
       required double subtotal,
       Value<double> discount,
       Value<double> tax,
@@ -10451,7 +10454,7 @@ typedef $$SalesTableUpdateCompanionBuilder =
     SalesCompanion Function({
       Value<String> id,
       Value<String> storeId,
-      Value<String> authorUserId,
+      Value<String?> authorUserId,
       Value<double> subtotal,
       Value<double> discount,
       Value<double> tax,
@@ -10695,7 +10698,7 @@ class $$SalesTableTableManager
               ({
                 Value<String> id = const Value.absent(),
                 Value<String> storeId = const Value.absent(),
-                Value<String> authorUserId = const Value.absent(),
+                Value<String?> authorUserId = const Value.absent(),
                 Value<double> subtotal = const Value.absent(),
                 Value<double> discount = const Value.absent(),
                 Value<double> tax = const Value.absent(),
@@ -10727,7 +10730,7 @@ class $$SalesTableTableManager
               ({
                 required String id,
                 required String storeId,
-                required String authorUserId,
+                Value<String?> authorUserId = const Value.absent(),
                 required double subtotal,
                 Value<double> discount = const Value.absent(),
                 Value<double> tax = const Value.absent(),

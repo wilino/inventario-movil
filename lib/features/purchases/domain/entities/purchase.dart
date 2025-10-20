@@ -4,9 +4,9 @@ import 'package:equatable/equatable.dart';
 class Purchase extends Equatable {
   final String id;
   final String storeId;
-  final String supplierId;
+  final String? supplierId;
   final String supplierName;
-  final String authorUserId;
+  final String? authorUserId;
   final List<PurchaseItem> items;
   final double subtotal;
   final double discount;
@@ -22,9 +22,9 @@ class Purchase extends Equatable {
   const Purchase({
     required this.id,
     required this.storeId,
-    required this.supplierId,
+    this.supplierId,
     required this.supplierName,
-    required this.authorUserId,
+    this.authorUserId,
     required this.items,
     required this.subtotal,
     required this.discount,

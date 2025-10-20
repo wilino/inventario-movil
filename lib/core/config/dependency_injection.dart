@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/database.dart';
+import '../config/data_seeder.dart';
 import '../services/connectivity_service.dart';
 import '../services/sync_service.dart';
 
@@ -37,6 +38,18 @@ import '../../features/transfers/domain/usecases/get_pending_transfers_usecase.d
 import '../../features/transfers/domain/usecases/get_store_transfers_usecase.dart';
 import '../../features/transfers/domain/usecases/get_transfers_stats_usecase.dart';
 import '../../features/transfers/presentation/bloc/transfer_bloc.dart';
+
+// Inventory
+import '../../features/inventory/data/datasources/inventory_local_datasource.dart';
+import '../../features/inventory/data/datasources/inventory_remote_datasource.dart';
+import '../../features/inventory/data/repositories/inventory_repository_impl.dart';
+import '../../features/inventory/domain/repositories/inventory_repository.dart';
+import '../../features/inventory/domain/usecases/adjust_inventory.dart';
+import '../../features/inventory/domain/usecases/get_adjustment_history.dart';
+import '../../features/inventory/domain/usecases/get_inventory_stats.dart';
+import '../../features/inventory/domain/usecases/get_low_stock_items.dart';
+import '../../features/inventory/domain/usecases/get_store_inventory.dart';
+import '../../features/inventory/presentation/bloc/inventory_bloc.dart';
 
 // Reports
 import '../../features/reports/data/datasources/report_local_datasource.dart';
@@ -79,6 +92,23 @@ Future<void> setupDependencies() async {
 
   // Transfers Module
   _setupTransfersModule();
+
+  // Inventory Module
+  _setupInventoryModule();
+
+  // Inicializar datos de ejemplo si la DB está vacía
+  final seeder = DataSeeder(database);
+
+  // TEMPORAL: Limpiar datos viejos y forzar sincronización desde Supabase
+  final hasOldData = await seeder.hasData();
+  if (hasOldData) {
+    print('🔄 Limpiando datos locales para sincronizar desde Supabase...');
+    await seeder.clearAllData();
+  }
+
+  // Forzar sincronización inicial desde Supabase
+  print('🔄 Iniciando sincronización desde Supabase...');
+  await syncService.syncPendingOps();
 }
 
 /// Configura el módulo de Ventas
@@ -230,10 +260,12 @@ void _setupTransfersModule() {
 
   // Repository
   getIt.registerLazySingleton<ReportRepository>(
-    () => ReportRepositoryImpl(
-      getIt<ReportLocalDataSource>(),
-      getIt<ReportRemoteDataSource>(),
-    ),
+    () =>
+        ReportRepositoryImpl(
+              getIt<ReportLocalDataSource>(),
+              getIt<ReportRemoteDataSource>(),
+            )
+            as ReportRepository,
   );
 
   // Use cases
@@ -261,6 +293,54 @@ void _setupTransfersModule() {
       getPurchasesReportUseCase: getIt<GetPurchasesReportUseCase>(),
       getInventoryReportUseCase: getIt<GetInventoryReportUseCase>(),
       reportRepository: getIt<ReportRepository>(),
+    ),
+  );
+}
+
+/// Configura el módulo de Inventario
+void _setupInventoryModule() {
+  // Data Sources
+  getIt.registerLazySingleton<InventoryLocalDataSource>(
+    () => InventoryLocalDataSource(getIt<AppDatabase>()),
+  );
+
+  getIt.registerLazySingleton<InventoryRemoteDataSource>(
+    () => InventoryRemoteDataSource(),
+  );
+
+  // Repository
+  getIt.registerLazySingleton<InventoryRepository>(
+    () => InventoryRepositoryImpl(
+      localDataSource: getIt<InventoryLocalDataSource>(),
+      remoteDataSource: getIt<InventoryRemoteDataSource>(),
+    ),
+  );
+
+  // Use Cases
+  getIt.registerLazySingleton(
+    () => GetStoreInventoryUseCase(getIt<InventoryRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetLowStockItemsUseCase(getIt<InventoryRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetInventoryStatsUseCase(getIt<InventoryRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => AdjustInventoryUseCase(getIt<InventoryRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetAdjustmentHistoryUseCase(getIt<InventoryRepository>()),
+  );
+
+  // BLoC - Factory para crear nueva instancia cada vez que se necesite
+  getIt.registerFactory(
+    () => InventoryBloc(
+      getStoreInventoryUseCase: getIt<GetStoreInventoryUseCase>(),
+      getLowStockItemsUseCase: getIt<GetLowStockItemsUseCase>(),
+      getInventoryStatsUseCase: getIt<GetInventoryStatsUseCase>(),
+      adjustInventoryUseCase: getIt<AdjustInventoryUseCase>(),
+      getAdjustmentHistoryUseCase: getIt<GetAdjustmentHistoryUseCase>(),
     ),
   );
 }
