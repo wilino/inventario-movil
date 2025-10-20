@@ -19,7 +19,7 @@ class InventoryRepositoryImpl implements InventoryRepository {
     try {
       // Offline-first: Intentar local primero
       final local = await localDataSource.getStoreInventory(storeId);
-      
+
       // Intentar sincronizar en segundo plano
       _syncInBackground(() async {
         final remote = await remoteDataSource.getStoreInventory(storeId);
@@ -37,7 +37,7 @@ class InventoryRepositoryImpl implements InventoryRepository {
   Future<List<InventoryItem>> getProductInventory(String productId) async {
     try {
       final local = await localDataSource.getProductInventory(productId);
-      
+
       _syncInBackground(() async {
         await remoteDataSource.getProductInventory(productId);
       });
@@ -56,7 +56,7 @@ class InventoryRepositoryImpl implements InventoryRepository {
   ) async {
     try {
       final local = await localDataSource.getInventoryItem(storeId, productId);
-      
+
       _syncInBackground(() async {
         await remoteDataSource.getInventoryItem(storeId, productId);
       });
@@ -72,7 +72,7 @@ class InventoryRepositoryImpl implements InventoryRepository {
   Future<List<InventoryItem>> getLowStockItems(String storeId) async {
     try {
       final local = await localDataSource.getLowStockItems(storeId);
-      
+
       _syncInBackground(() async {
         await remoteDataSource.getLowStockItems(storeId);
       });
@@ -88,7 +88,7 @@ class InventoryRepositoryImpl implements InventoryRepository {
   Future<List<InventoryItem>> getOutOfStockItems(String storeId) async {
     try {
       final local = await localDataSource.getOutOfStockItems(storeId);
-      
+
       _syncInBackground(() async {
         await remoteDataSource.getOutOfStockItems(storeId);
       });
@@ -173,11 +173,7 @@ class InventoryRepositoryImpl implements InventoryRepository {
 
       // Intentar sincronizar con remoto
       _syncInBackground(() async {
-        await remoteDataSource.updateStockLimits(
-          inventoryId,
-          minQty,
-          maxQty,
-        );
+        await remoteDataSource.updateStockLimits(inventoryId, minQty, maxQty);
       });
 
       return updated;
@@ -193,7 +189,7 @@ class InventoryRepositoryImpl implements InventoryRepository {
   ) async {
     try {
       final local = await localDataSource.getAdjustmentHistory(inventoryId);
-      
+
       _syncInBackground(() async {
         await remoteDataSource.getAdjustmentHistory(inventoryId);
       });
@@ -209,7 +205,7 @@ class InventoryRepositoryImpl implements InventoryRepository {
   Future<Map<String, dynamic>> getInventoryStats(String storeId) async {
     try {
       final local = await localDataSource.getInventoryStats(storeId);
-      
+
       _syncInBackground(() async {
         await remoteDataSource.getInventoryStats(storeId);
       });

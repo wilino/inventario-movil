@@ -1,3 +1,4 @@
+import '../../../../core/utils/result.dart';
 import '../repositories/sale_repository.dart';
 
 /// Caso de uso para obtener estadísticas de ventas
@@ -6,11 +7,15 @@ class GetSalesStatsUseCase {
 
   GetSalesStatsUseCase(this.repository);
 
-  Future<Map<String, dynamic>> call(
+  Future<Result<Map<String, dynamic>>> call(
     String storeId, {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
-    return await repository.getSalesStats(storeId, startDate, endDate);
+    return await repository.getSalesStats(
+      storeId,
+      startDate: startDate,
+      endDate: endDate,
+    );
   }
 }

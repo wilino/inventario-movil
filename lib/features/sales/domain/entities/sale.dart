@@ -38,16 +38,14 @@ class Sale {
     double discount,
     double tax,
   ) {
-    final subtotal = items.fold<double>(
-      0,
-      (sum, item) => sum + item.total,
-    );
+    final subtotal = items.fold<double>(0, (sum, item) => sum + item.total);
     final afterDiscount = subtotal - discount;
     return afterDiscount + (afterDiscount * tax / 100);
   }
 
   /// Número de items en la venta
-  int get itemCount => items.fold<int>(0, (sum, item) => sum + item.qty.toInt());
+  int get itemCount =>
+      items.fold<int>(0, (sum, item) => sum + item.qty.toInt());
 
   Sale copyWith({
     String? id,
@@ -149,8 +147,7 @@ class SaleItem {
   }
 
   @override
-  int get hashCode =>
-      productId.hashCode ^ variantId.hashCode ^ qty.hashCode;
+  int get hashCode => productId.hashCode ^ variantId.hashCode ^ qty.hashCode;
 
   @override
   String toString() {

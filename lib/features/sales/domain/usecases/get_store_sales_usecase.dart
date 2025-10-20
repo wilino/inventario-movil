@@ -1,3 +1,4 @@
+import '../../../../core/utils/result.dart';
 import '../entities/sale.dart';
 import '../repositories/sale_repository.dart';
 
@@ -7,7 +8,7 @@ class GetStoreSalesUseCase {
 
   GetStoreSalesUseCase(this.repository);
 
-  Future<List<Sale>> call(String storeId) async {
+  Future<Result<List<Sale>>> call(String storeId) async {
     return await repository.getStoreSales(storeId);
   }
 }

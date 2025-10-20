@@ -7,14 +7,10 @@ import '../../domain/usecases/adjust_inventory.dart';
 class InventoryDashboardPage extends StatefulWidget {
   final String storeId;
 
-  const InventoryDashboardPage({
-    super.key,
-    required this.storeId,
-  });
+  const InventoryDashboardPage({super.key, required this.storeId});
 
   @override
-  State<InventoryDashboardPage> createState() =>
-      _InventoryDashboardPageState();
+  State<InventoryDashboardPage> createState() => _InventoryDashboardPageState();
 }
 
 class _InventoryDashboardPageState extends State<InventoryDashboardPage> {
@@ -29,12 +25,10 @@ class _InventoryDashboardPageState extends State<InventoryDashboardPage> {
   void _loadInventory() {
     if (_showLowStockOnly) {
       context.read<InventoryBloc>().add(
-            InventoryLowStockRequested(widget.storeId),
-          );
+        InventoryLowStockRequested(widget.storeId),
+      );
     } else {
-      context.read<InventoryBloc>().add(
-            InventoryLoadRequested(widget.storeId),
-          );
+      context.read<InventoryBloc>().add(InventoryLoadRequested(widget.storeId));
     }
   }
 
@@ -57,8 +51,8 @@ class _InventoryDashboardPageState extends State<InventoryDashboardPage> {
             icon: const Icon(Icons.assessment),
             onPressed: () {
               context.read<InventoryBloc>().add(
-                    InventoryStatsRequested(widget.storeId),
-                  );
+                InventoryStatsRequested(widget.storeId),
+              );
               _showStatsDialog();
             },
             tooltip: 'Estadísticas',
@@ -140,9 +134,7 @@ class _InventoryDashboardPageState extends State<InventoryDashboardPage> {
   }
 
   void _showAdjustDialog(InventoryItem item) {
-    final qtyController = TextEditingController(
-      text: item.stockQty.toString(),
-    );
+    final qtyController = TextEditingController(text: item.stockQty.toString());
     String adjustType = 'set';
     final reasonController = TextEditingController();
 
@@ -196,17 +188,17 @@ class _InventoryDashboardPageState extends State<InventoryDashboardPage> {
             onPressed: () {
               final newQty = double.tryParse(qtyController.text) ?? 0;
               context.read<InventoryBloc>().add(
-                    InventoryAdjustRequested(
-                      AdjustInventoryParams(
-                        inventoryId: item.id,
-                        newQty: newQty,
-                        userId: 'current_user_id', // TODO: Obtener del auth
-                        type: adjustType,
-                        reason: reasonController.text,
-                        notes: null,
-                      ),
-                    ),
-                  );
+                InventoryAdjustRequested(
+                  AdjustInventoryParams(
+                    inventoryId: item.id,
+                    newQty: newQty,
+                    userId: 'current_user_id', // TODO: Obtener del auth
+                    type: adjustType,
+                    reason: reasonController.text,
+                    notes: null,
+                  ),
+                ),
+              );
               Navigator.pop(dialogContext);
             },
             child: const Text('Ajustar'),
@@ -238,13 +230,13 @@ class _InventoryDashboardPageState extends State<InventoryDashboardPage> {
                         adj.type == 'increment'
                             ? Icons.arrow_upward
                             : adj.type == 'decrement'
-                                ? Icons.arrow_downward
-                                : Icons.edit,
+                            ? Icons.arrow_downward
+                            : Icons.edit,
                         color: adj.type == 'increment'
                             ? Colors.green
                             : adj.type == 'decrement'
-                                ? Colors.red
-                                : Colors.blue,
+                            ? Colors.red
+                            : Colors.blue,
                       ),
                       title: Text(
                         '${adj.previousQty} → ${adj.newQty} (${adj.adjustmentQty >= 0 ? '+' : ''}${adj.adjustmentQty})',
@@ -342,8 +334,8 @@ class _InventoryItemCard extends StatelessWidget {
           backgroundColor: item.isOutOfStock
               ? Colors.red
               : item.isLowStock
-                  ? Colors.orange
-                  : Colors.green,
+              ? Colors.orange
+              : Colors.green,
           child: Text(
             item.stockQty.toInt().toString(),
             style: const TextStyle(
@@ -364,8 +356,8 @@ class _InventoryItemCard extends StatelessWidget {
               color: item.isOutOfStock
                   ? Colors.red
                   : item.isLowStock
-                      ? Colors.orange
-                      : Colors.green,
+                  ? Colors.orange
+                  : Colors.green,
             ),
           ],
         ),
@@ -427,10 +419,7 @@ class _StatRow extends StatelessWidget {
           Expanded(child: Text(label)),
           Text(
             value,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold, color: color),
           ),
         ],
       ),

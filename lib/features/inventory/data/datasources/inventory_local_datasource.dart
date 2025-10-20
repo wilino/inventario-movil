@@ -11,18 +11,18 @@ class InventoryLocalDataSource {
 
   /// Obtiene el inventario de una tienda
   Future<List<InventoryItem>> getStoreInventory(String storeId) async {
-    final results = await (db.select(db.inventory)
-          ..where((t) => t.storeId.equals(storeId)))
-        .get();
+    final results = await (db.select(
+      db.inventory,
+    )..where((t) => t.storeId.equals(storeId))).get();
 
     return results.map(_mapToEntity).toList();
   }
 
   /// Obtiene el inventario de un producto en todas las tiendas
   Future<List<InventoryItem>> getProductInventory(String productId) async {
-    final results = await (db.select(db.inventory)
-          ..where((t) => t.productId.equals(productId)))
-        .get();
+    final results = await (db.select(
+      db.inventory,
+    )..where((t) => t.productId.equals(productId))).get();
 
     return results.map(_mapToEntity).toList();
   }
@@ -32,31 +32,37 @@ class InventoryLocalDataSource {
     String storeId,
     String productId,
   ) async {
-    final result = await (db.select(db.inventory)
-          ..where((t) => t.storeId.equals(storeId) & t.productId.equals(productId)))
-        .getSingleOrNull();
+    final result =
+        await (db.select(db.inventory)..where(
+              (t) => t.storeId.equals(storeId) & t.productId.equals(productId),
+            ))
+            .getSingleOrNull();
 
     return result != null ? _mapToEntity(result) : null;
   }
 
   /// Obtiene productos con stock bajo
   Future<List<InventoryItem>> getLowStockItems(String storeId) async {
-    final results = await (db.select(db.inventory)
-          ..where((t) => 
-              t.storeId.equals(storeId) & 
-              (db.inventory.stockQty.isSmallerOrEqual(db.inventory.minQty))))
-        .get();
+    final results =
+        await (db.select(db.inventory)..where(
+              (t) =>
+                  t.storeId.equals(storeId) &
+                  (db.inventory.stockQty.isSmallerOrEqual(db.inventory.minQty)),
+            ))
+            .get();
 
     return results.map(_mapToEntity).toList();
   }
 
   /// Obtiene productos agotados
   Future<List<InventoryItem>> getOutOfStockItems(String storeId) async {
-    final results = await (db.select(db.inventory)
-          ..where((t) => 
-              t.storeId.equals(storeId) & 
-              t.stockQty.isSmallerOrEqualValue(0)))
-        .get();
+    final results =
+        await (db.select(db.inventory)..where(
+              (t) =>
+                  t.storeId.equals(storeId) &
+                  t.stockQty.isSmallerOrEqualValue(0),
+            ))
+            .get();
 
     return results.map(_mapToEntity).toList();
   }
@@ -71,17 +77,17 @@ class InventoryLocalDataSource {
     String? notes,
   ) async {
     // Obtener el ítem actual
-    final current = await (db.select(db.inventory)
-          ..where((t) => t.id.equals(inventoryId)))
-        .getSingle();
+    final current = await (db.select(
+      db.inventory,
+    )..where((t) => t.id.equals(inventoryId))).getSingle();
 
     final previousQty = current.stockQty;
     final adjustmentQty = newQty - previousQty;
 
     // Actualizar el stock
-    await (db.update(db.inventory)
-          ..where((t) => t.id.equals(inventoryId)))
-        .write(
+    await (db.update(
+      db.inventory,
+    )..where((t) => t.id.equals(inventoryId))).write(
       InventoryCompanion(
         stockQty: Value(newQty),
         updatedAt: Value(DateTime.now()),
@@ -90,7 +96,9 @@ class InventoryLocalDataSource {
 
     // Registrar el ajuste en el historial
     final adjustmentId = DateTime.now().millisecondsSinceEpoch.toString();
-    await db.into(db.inventoryAdjustments).insert(
+    await db
+        .into(db.inventoryAdjustments)
+        .insert(
           InventoryAdjustmentsCompanion.insert(
             id: adjustmentId,
             inventoryId: inventoryId,
@@ -106,16 +114,18 @@ class InventoryLocalDataSource {
         );
 
     // Retornar el ítem actualizado
-    final updated = await (db.select(db.inventory)
-          ..where((t) => t.id.equals(inventoryId)))
-        .getSingle();
+    final updated = await (db.select(
+      db.inventory,
+    )..where((t) => t.id.equals(inventoryId))).getSingle();
 
     return _mapToEntity(updated);
   }
 
   /// Crea un nuevo registro de inventario
   Future<InventoryItem> createInventoryItem(InventoryItem item) async {
-    await db.into(db.inventory).insert(
+    await db
+        .into(db.inventory)
+        .insert(
           InventoryCompanion.insert(
             id: item.id,
             storeId: item.storeId,
@@ -137,9 +147,9 @@ class InventoryLocalDataSource {
     double minQty,
     double maxQty,
   ) async {
-    await (db.update(db.inventory)
-          ..where((t) => t.id.equals(inventoryId)))
-        .write(
+    await (db.update(
+      db.inventory,
+    )..where((t) => t.id.equals(inventoryId))).write(
       InventoryCompanion(
         minQty: Value(minQty),
         maxQty: Value(maxQty),
@@ -147,9 +157,9 @@ class InventoryLocalDataSource {
       ),
     );
 
-    final updated = await (db.select(db.inventory)
-          ..where((t) => t.id.equals(inventoryId)))
-        .getSingle();
+    final updated = await (db.select(
+      db.inventory,
+    )..where((t) => t.id.equals(inventoryId))).getSingle();
 
     return _mapToEntity(updated);
   }
@@ -158,10 +168,11 @@ class InventoryLocalDataSource {
   Future<List<domain.InventoryAdjustment>> getAdjustmentHistory(
     String inventoryId,
   ) async {
-    final results = await (db.select(db.inventoryAdjustments)
-          ..where((t) => t.inventoryId.equals(inventoryId))
-          ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
-        .get();
+    final results =
+        await (db.select(db.inventoryAdjustments)
+              ..where((t) => t.inventoryId.equals(inventoryId))
+              ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
+            .get();
 
     return results.map(_mapAdjustmentToEntity).toList();
   }
@@ -175,7 +186,8 @@ class InventoryLocalDataSource {
     final outOfStockItems = items.where((i) => i.isOutOfStock).length;
     final totalValue = items.fold<double>(
       0,
-      (sum, item) => sum + (item.stockQty * 0), // Necesitaría el costo del producto
+      (sum, item) =>
+          sum + (item.stockQty * 0), // Necesitaría el costo del producto
     );
 
     return {

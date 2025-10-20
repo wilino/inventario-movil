@@ -10,10 +10,7 @@ abstract class InventoryRepository {
   Future<List<InventoryItem>> getProductInventory(String productId);
 
   /// Obtiene un ítem de inventario específico
-  Future<InventoryItem?> getInventoryItem(
-    String storeId,
-    String productId,
-  );
+  Future<InventoryItem?> getInventoryItem(String storeId, String productId);
 
   /// Obtiene productos con stock bajo
   Future<List<InventoryItem>> getLowStockItems(String storeId);
@@ -42,9 +39,7 @@ abstract class InventoryRepository {
   );
 
   /// Obtiene el historial de ajustes de un ítem de inventario
-  Future<List<InventoryAdjustment>> getAdjustmentHistory(
-    String inventoryId,
-  );
+  Future<List<InventoryAdjustment>> getAdjustmentHistory(String inventoryId);
 
   /// Obtiene estadísticas de inventario para una tienda
   Future<Map<String, dynamic>> getInventoryStats(String storeId);

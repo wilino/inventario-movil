@@ -1,3 +1,5 @@
+import '../../../../core/errors/failures.dart';
+import '../../../../core/utils/result.dart';
 import '../entities/sale.dart';
 import '../repositories/sale_repository.dart';
 
@@ -7,14 +9,20 @@ class CreateSaleUseCase {
 
   CreateSaleUseCase(this.repository);
 
-  Future<Sale> call(Sale sale) async {
+  Future<Result<Sale>> call(Sale sale) async {
     // Validaciones
     if (sale.items.isEmpty) {
-      throw Exception('La venta debe tener al menos un producto');
+      return const Error(
+        ValidationFailure(message: 'La venta debe tener al menos un producto'),
+      );
     }
 
     if (sale.total <= 0) {
-      throw Exception('El total de la venta debe ser mayor a cero');
+      return const Error(
+        ValidationFailure(
+          message: 'El total de la venta debe ser mayor a cero',
+        ),
+      );
     }
 
     return await repository.createSale(sale);

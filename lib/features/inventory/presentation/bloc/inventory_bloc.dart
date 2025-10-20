@@ -17,7 +17,7 @@ abstract class InventoryEvent extends Equatable {
 class InventoryLoadRequested extends InventoryEvent {
   final String storeId;
   InventoryLoadRequested(this.storeId);
-  
+
   @override
   List<Object?> get props => [storeId];
 }
@@ -25,7 +25,7 @@ class InventoryLoadRequested extends InventoryEvent {
 class InventoryLowStockRequested extends InventoryEvent {
   final String storeId;
   InventoryLowStockRequested(this.storeId);
-  
+
   @override
   List<Object?> get props => [storeId];
 }
@@ -33,7 +33,7 @@ class InventoryLowStockRequested extends InventoryEvent {
 class InventoryAdjustRequested extends InventoryEvent {
   final AdjustInventoryParams params;
   InventoryAdjustRequested(this.params);
-  
+
   @override
   List<Object?> get props => [params];
 }
@@ -41,7 +41,7 @@ class InventoryAdjustRequested extends InventoryEvent {
 class InventoryStatsRequested extends InventoryEvent {
   final String storeId;
   InventoryStatsRequested(this.storeId);
-  
+
   @override
   List<Object?> get props => [storeId];
 }
@@ -49,7 +49,7 @@ class InventoryStatsRequested extends InventoryEvent {
 class InventoryHistoryRequested extends InventoryEvent {
   final String inventoryId;
   InventoryHistoryRequested(this.inventoryId);
-  
+
   @override
   List<Object?> get props => [inventoryId];
 }
@@ -67,7 +67,7 @@ class InventoryLoading extends InventoryState {}
 class InventoryLoaded extends InventoryState {
   final List<InventoryItem> items;
   InventoryLoaded(this.items);
-  
+
   @override
   List<Object?> get props => [items];
 }
@@ -75,7 +75,7 @@ class InventoryLoaded extends InventoryState {
 class InventoryStatsLoaded extends InventoryState {
   final Map<String, dynamic> stats;
   InventoryStatsLoaded(this.stats);
-  
+
   @override
   List<Object?> get props => [stats];
 }
@@ -83,7 +83,7 @@ class InventoryStatsLoaded extends InventoryState {
 class InventoryHistoryLoaded extends InventoryState {
   final List<InventoryAdjustment> history;
   InventoryHistoryLoaded(this.history);
-  
+
   @override
   List<Object?> get props => [history];
 }
@@ -91,7 +91,7 @@ class InventoryHistoryLoaded extends InventoryState {
 class InventoryOperationSuccess extends InventoryState {
   final String message;
   InventoryOperationSuccess(this.message);
-  
+
   @override
   List<Object?> get props => [message];
 }
@@ -99,7 +99,7 @@ class InventoryOperationSuccess extends InventoryState {
 class InventoryError extends InventoryState {
   final String message;
   InventoryError(this.message);
-  
+
   @override
   List<Object?> get props => [message];
 }
@@ -148,7 +148,11 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       final items = await getLowStockItemsUseCase(event.storeId);
       emit(InventoryLoaded(items));
     } catch (e) {
-      emit(InventoryError('Error al cargar productos con stock bajo: ${e.toString()}'));
+      emit(
+        InventoryError(
+          'Error al cargar productos con stock bajo: ${e.toString()}',
+        ),
+      );
     }
   }
 
