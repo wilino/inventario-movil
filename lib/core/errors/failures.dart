@@ -39,3 +39,8 @@ class AuthFailure extends Failure {
 class UnexpectedFailure extends Failure {
   const UnexpectedFailure({required super.message});
 }
+
+/// Recurso no encontrado
+class NotFoundFailure extends Failure {
+  const NotFoundFailure({super.message = 'Recurso no encontrado'});
+}

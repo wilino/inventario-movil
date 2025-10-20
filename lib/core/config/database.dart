@@ -97,18 +97,55 @@ class InventoryAdjustments extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Tabla de Compras
+/// Tabla de Proveedores
+class Suppliers extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text()();
+  TextColumn get contactName => text().nullable()();
+  TextColumn get email => text().nullable()();
+  TextColumn get phone => text().nullable()();
+  TextColumn get address => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Tabla de Compras (encabezado)
 class Purchases extends Table {
   TextColumn get id => text()();
   TextColumn get storeId => text()();
-  TextColumn get productId => text()();
-  TextColumn get variantId => text().nullable()();
-  IntColumn get qty => integer()();
-  RealColumn get unitCost => real().nullable()();
-  DateTimeColumn get at => dateTime()();
+  TextColumn get supplierId => text()();
+  TextColumn get supplierName => text()();
   TextColumn get authorUserId => text()();
+  RealColumn get subtotal => real()();
+  RealColumn get discount => real().withDefault(const Constant(0))();
+  RealColumn get tax => real().withDefault(const Constant(0))();
+  RealColumn get total => real()();
+  TextColumn get invoiceNumber => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get at => dateTime()();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
+  BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Tabla de Items de Compra (detalle)
+class PurchaseItems extends Table {
+  TextColumn get id => text()();
+  TextColumn get purchaseId => text()();
+  TextColumn get productId => text()();
+  TextColumn get variantId => text().nullable()();
+  TextColumn get productName => text()();
+  RealColumn get qty => real()();
+  RealColumn get unitCost => real()();
+  RealColumn get total => real()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -186,7 +223,9 @@ class PendingOps extends Table {
     ProductVariants,
     Inventory,
     InventoryAdjustments,
+    Suppliers,
     Purchases,
+    PurchaseItems,
     Sales,
     SaleItems,
     Transfers,
@@ -197,7 +236,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -209,6 +248,17 @@ class AppDatabase extends _$AppDatabase {
         // Migrar tabla Sales al nuevo formato y crear SaleItems
         await migrator.createTable(saleItems);
         // Nota: En producción deberías migrar los datos existentes
+      }
+      if (from < 4) {
+        // Crear tabla de proveedores
+        await migrator.createTable(suppliers);
+        
+        // Eliminar tabla antigua de Purchases
+        await migrator.deleteTable('purchases');
+        
+        // Crear nuevas tablas de Purchases (encabezado + detalle)
+        await migrator.createTable(purchases);
+        await migrator.createTable(purchaseItems);
       }
     },
   );
