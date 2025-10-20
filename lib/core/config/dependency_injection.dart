@@ -13,6 +13,7 @@ import '../../features/sales/domain/usecases/create_sale_usecase.dart';
 import '../../features/sales/domain/usecases/get_sales_stats_usecase.dart';
 import '../../features/sales/domain/usecases/get_store_sales_usecase.dart';
 import '../../features/sales/domain/usecases/get_today_sales_usecase.dart';
+import '../../features/sales/presentation/bloc/sale_bloc.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -46,7 +47,7 @@ void _setupSalesModule() {
   getIt.registerLazySingleton<SaleLocalDataSource>(
     () => SaleLocalDataSource(getIt<AppDatabase>()),
   );
-  
+
   getIt.registerLazySingleton<SaleRemoteDataSource>(
     () => SaleRemoteDataSource(getIt<SupabaseClient>()),
   );
@@ -61,10 +62,24 @@ void _setupSalesModule() {
 
   // Use Cases
   getIt.registerLazySingleton(() => CreateSaleUseCase(getIt<SaleRepository>()));
-  getIt.registerLazySingleton(() => GetStoreSalesUseCase(getIt<SaleRepository>()));
-  getIt.registerLazySingleton(() => GetTodaySalesUseCase(getIt<SaleRepository>()));
-  getIt.registerLazySingleton(() => GetSalesStatsUseCase(getIt<SaleRepository>()));
-  
-  // BLoC se registrará cuando se implemente la capa de presentación
-}
+  getIt.registerLazySingleton(
+    () => GetStoreSalesUseCase(getIt<SaleRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetTodaySalesUseCase(getIt<SaleRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetSalesStatsUseCase(getIt<SaleRepository>()),
+  );
 
+  // BLoC - Factory para crear nueva instancia cada vez que se necesite
+  getIt.registerFactory(
+    () => SaleBloc(
+      createSaleUseCase: getIt<CreateSaleUseCase>(),
+      getStoreSalesUseCase: getIt<GetStoreSalesUseCase>(),
+      getTodaySalesUseCase: getIt<GetTodaySalesUseCase>(),
+      getSalesStatsUseCase: getIt<GetSalesStatsUseCase>(),
+      repository: getIt<SaleRepository>(),
+    ),
+  );
+}
