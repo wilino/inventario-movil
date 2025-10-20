@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'core/config/supabase_config.dart';
 import 'core/config/dependency_injection.dart';
-import 'core/services/connectivity_service.dart';
-import 'core/services/sync_service.dart';
+import 'core/presentation/main_navigation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,11 +34,14 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const MainNavigation(
+        storeId: 'store_001', // TODO: Obtener de autenticación/sesión
+      ),
     );
   }
 }
 
+/* HomePage original - Reemplazada por MainNavigation
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -199,3 +201,4 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 }
+*/
