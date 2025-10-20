@@ -2,10 +2,10 @@ import 'package:equatable/equatable.dart';
 
 /// Estados de una transferencia
 enum TransferStatus {
-  pending,    // Pendiente de envío
-  inTransit,  // En tránsito
-  completed,  // Completada
-  cancelled,  // Cancelada
+  pending, // Pendiente de envío
+  inTransit, // En tránsito
+  completed, // Completada
+  cancelled, // Cancelada
 }
 
 /// Entity que representa una transferencia entre almacenes
@@ -54,26 +54,26 @@ class Transfer extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        fromStoreId,
-        fromStoreName,
-        toStoreId,
-        toStoreName,
-        productId,
-        variantId,
-        productName,
-        qty,
-        status,
-        authorUserId,
-        notes,
-        requestedAt,
-        sentAt,
-        receivedAt,
-        cancelledAt,
-        cancellationReason,
-        createdAt,
-        updatedAt,
-      ];
+    id,
+    fromStoreId,
+    fromStoreName,
+    toStoreId,
+    toStoreName,
+    productId,
+    variantId,
+    productName,
+    qty,
+    status,
+    authorUserId,
+    notes,
+    requestedAt,
+    sentAt,
+    receivedAt,
+    cancelledAt,
+    cancellationReason,
+    createdAt,
+    updatedAt,
+  ];
 
   /// Copia con modificaciones
   Transfer copyWith({

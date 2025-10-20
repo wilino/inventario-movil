@@ -48,9 +48,9 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     Emitter<PurchaseState> emit,
   ) async {
     emit(PurchaseLoading());
-    
+
     final result = await getStorePurchasesUseCase(event.storeId);
-    
+
     result.fold(
       (failure) => emit(PurchaseError(failure.message)),
       (purchases) => emit(PurchasesLoaded(purchases)),
@@ -63,9 +63,9 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     Emitter<PurchaseState> emit,
   ) async {
     emit(PurchaseLoading());
-    
+
     final result = await getTodayPurchasesUseCase(event.storeId);
-    
+
     result.fold(
       (failure) => emit(PurchaseError(failure.message)),
       (purchases) => emit(PurchasesLoaded(purchases)),
@@ -78,9 +78,9 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     Emitter<PurchaseState> emit,
   ) async {
     emit(PurchaseLoading());
-    
+
     final result = await createPurchaseUseCase(event.purchase);
-    
+
     result.fold(
       (failure) => emit(PurchaseError(failure.message)),
       (purchase) => emit(PurchaseCreated(purchase)),
@@ -93,9 +93,9 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     Emitter<PurchaseState> emit,
   ) async {
     emit(PurchaseLoading());
-    
+
     final result = await repository.cancelPurchase(event.id);
-    
+
     result.fold(
       (failure) => emit(PurchaseError(failure.message)),
       (_) => emit(PurchaseCancelled(event.id)),
@@ -108,9 +108,9 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     Emitter<PurchaseState> emit,
   ) async {
     emit(PurchaseLoading());
-    
+
     final result = await repository.getPurchaseById(event.id);
-    
+
     result.fold(
       (failure) => emit(PurchaseError(failure.message)),
       (purchase) => emit(PurchaseDetailLoaded(purchase)),
@@ -123,13 +123,13 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     Emitter<PurchaseState> emit,
   ) async {
     emit(PurchaseLoading());
-    
+
     final result = await repository.getPurchasesByDateRange(
       event.storeId,
       event.startDate,
       event.endDate,
     );
-    
+
     result.fold(
       (failure) => emit(PurchaseError(failure.message)),
       (purchases) => emit(PurchasesLoaded(purchases)),
@@ -142,12 +142,12 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     Emitter<PurchaseState> emit,
   ) async {
     emit(PurchaseLoading());
-    
+
     final result = await repository.searchPurchasesBySupplier(
       event.storeId,
       event.supplierId,
     );
-    
+
     result.fold(
       (failure) => emit(PurchaseError(failure.message)),
       (purchases) => emit(PurchasesLoaded(purchases)),
@@ -160,12 +160,12 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     Emitter<PurchaseState> emit,
   ) async {
     emit(PurchaseLoading());
-    
+
     final result = await repository.searchPurchasesByInvoice(
       event.storeId,
       event.query,
     );
-    
+
     result.fold(
       (failure) => emit(PurchaseError(failure.message)),
       (purchases) => emit(PurchasesLoaded(purchases)),
@@ -179,28 +179,30 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
   ) async {
     // Cargar compras primero
     final purchasesResult = await getStorePurchasesUseCase(event.storeId);
-    
+
     // Cargar estadísticas
     final statsResult = await getPurchasesStatsUseCase(
       event.storeId,
       startDate: event.startDate,
       endDate: event.endDate,
     );
-    
+
     if (purchasesResult.isError) {
       emit(PurchaseError(purchasesResult.errorOrNull!.message));
       return;
     }
-    
+
     if (statsResult.isError) {
       emit(PurchaseError(statsResult.errorOrNull!.message));
       return;
     }
-    
-    emit(PurchasesLoaded(
-      purchasesResult.valueOrNull!,
-      stats: statsResult.valueOrNull,
-    ));
+
+    emit(
+      PurchasesLoaded(
+        purchasesResult.valueOrNull!,
+        stats: statsResult.valueOrNull,
+      ),
+    );
   }
 
   /// Cargar proveedores activos
@@ -209,9 +211,9 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     Emitter<PurchaseState> emit,
   ) async {
     emit(PurchaseLoading());
-    
+
     final result = await getActiveSuppliersUseCase();
-    
+
     result.fold(
       (failure) => emit(PurchaseError(failure.message)),
       (suppliers) => emit(SuppliersLoaded(suppliers)),
@@ -224,9 +226,9 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     Emitter<PurchaseState> emit,
   ) async {
     emit(PurchaseLoading());
-    
+
     final result = await repository.createSupplier(event.supplier);
-    
+
     result.fold(
       (failure) => emit(PurchaseError(failure.message)),
       (supplier) => emit(SupplierCreated(supplier)),
@@ -239,9 +241,9 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     Emitter<PurchaseState> emit,
   ) async {
     emit(PurchaseLoading());
-    
+
     final result = await repository.updateSupplier(event.supplier);
-    
+
     result.fold(
       (failure) => emit(PurchaseError(failure.message)),
       (supplier) => emit(SupplierUpdated(supplier)),
@@ -254,9 +256,9 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     Emitter<PurchaseState> emit,
   ) async {
     emit(PurchaseLoading());
-    
+
     final result = await repository.deactivateSupplier(event.id);
-    
+
     result.fold(
       (failure) => emit(PurchaseError(failure.message)),
       (_) => emit(SupplierDeactivated(event.id)),
@@ -269,7 +271,7 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     Emitter<PurchaseState> emit,
   ) async {
     final result = await repository.syncWithRemote(event.storeId);
-    
+
     result.fold(
       (failure) => emit(PurchaseError(failure.message)),
       (_) => emit(PurchasesSynced()),

@@ -19,9 +19,7 @@ class CreateTransferUseCase {
 
     if (transfer.fromStoreId == transfer.toStoreId) {
       return Error(
-        ValidationFailure(
-          message: 'No se puede transferir a la misma tienda',
-        ),
+        ValidationFailure(message: 'No se puede transferir a la misma tienda'),
       );
     }
 
@@ -38,9 +36,7 @@ class CreateTransferUseCase {
     }
 
     if (transfer.productId.isEmpty) {
-      return Error(
-        ValidationFailure(message: 'Debe especificar un producto'),
-      );
+      return Error(ValidationFailure(message: 'Debe especificar un producto'));
     }
 
     // Crear transferencia

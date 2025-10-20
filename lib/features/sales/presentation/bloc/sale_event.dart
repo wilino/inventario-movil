@@ -70,10 +70,7 @@ class SearchSalesByCustomer extends SaleEvent {
   final String storeId;
   final String query;
 
-  const SearchSalesByCustomer({
-    required this.storeId,
-    required this.query,
-  });
+  const SearchSalesByCustomer({required this.storeId, required this.query});
 
   @override
   List<Object?> get props => [storeId, query];
@@ -85,11 +82,7 @@ class LoadSalesStats extends SaleEvent {
   final DateTime? startDate;
   final DateTime? endDate;
 
-  const LoadSalesStats({
-    required this.storeId,
-    this.startDate,
-    this.endDate,
-  });
+  const LoadSalesStats({required this.storeId, this.startDate, this.endDate});
 
   @override
   List<Object?> get props => [storeId, startDate, endDate];

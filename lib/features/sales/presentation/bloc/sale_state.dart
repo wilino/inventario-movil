@@ -20,22 +20,13 @@ class SalesLoaded extends SaleState {
   final List<Sale> sales;
   final Map<String, dynamic>? stats;
 
-  const SalesLoaded({
-    required this.sales,
-    this.stats,
-  });
+  const SalesLoaded({required this.sales, this.stats});
 
   @override
   List<Object?> get props => [sales, stats];
 
-  SalesLoaded copyWith({
-    List<Sale>? sales,
-    Map<String, dynamic>? stats,
-  }) {
-    return SalesLoaded(
-      sales: sales ?? this.sales,
-      stats: stats ?? this.stats,
-    );
+  SalesLoaded copyWith({List<Sale>? sales, Map<String, dynamic>? stats}) {
+    return SalesLoaded(sales: sales ?? this.sales, stats: stats ?? this.stats);
   }
 }
 

@@ -11,20 +11,17 @@ class PurchaseRepositoryImpl implements PurchaseRepository {
   final PurchaseLocalDataSource local;
   final PurchaseRemoteDataSource remote;
 
-  PurchaseRepositoryImpl({
-    required this.local,
-    required this.remote,
-  });
+  PurchaseRepositoryImpl({required this.local, required this.remote});
 
   @override
   Future<Result<List<Purchase>>> getStorePurchases(String storeId) async {
     try {
       // Offline-First: retornar datos locales
       final purchases = await local.getStorePurchases(storeId);
-      
+
       // Intentar sincronizar en segundo plano (sin esperar)
       _syncPurchasesInBackground(storeId);
-      
+
       return Success(purchases);
     } catch (e) {
       return Error(CacheFailure(message: 'Error al obtener compras locales'));
@@ -74,7 +71,9 @@ class PurchaseRepositoryImpl implements PurchaseRepository {
       );
       return Success(purchases);
     } catch (e) {
-      return Error(CacheFailure(message: 'Error al buscar compras por proveedor'));
+      return Error(
+        CacheFailure(message: 'Error al buscar compras por proveedor'),
+      );
     }
   }
 
@@ -84,13 +83,12 @@ class PurchaseRepositoryImpl implements PurchaseRepository {
     String query,
   ) async {
     try {
-      final purchases = await local.searchPurchasesByInvoice(
-        storeId,
-        query,
-      );
+      final purchases = await local.searchPurchasesByInvoice(storeId, query);
       return Success(purchases);
     } catch (e) {
-      return Error(CacheFailure(message: 'Error al buscar compras por factura'));
+      return Error(
+        CacheFailure(message: 'Error al buscar compras por factura'),
+      );
     }
   }
 
@@ -99,10 +97,10 @@ class PurchaseRepositoryImpl implements PurchaseRepository {
     try {
       // Guardar localmente primero
       final created = await local.createPurchase(purchase);
-      
+
       // Intentar subir a Supabase en segundo plano
       _uploadPurchaseInBackground(purchase);
-      
+
       return Success(created);
     } catch (e) {
       return Error(CacheFailure(message: 'Error al crear compra'));
@@ -114,10 +112,10 @@ class PurchaseRepositoryImpl implements PurchaseRepository {
     try {
       // Cancelar localmente primero
       await local.cancelPurchase(id);
-      
+
       // Intentar cancelar en Supabase en segundo plano
       _cancelPurchaseInBackground(id);
-      
+
       return const Success(null);
     } catch (e) {
       return Error(CacheFailure(message: 'Error al cancelar compra'));
@@ -131,11 +129,7 @@ class PurchaseRepositoryImpl implements PurchaseRepository {
     DateTime? endDate,
   }) async {
     try {
-      final stats = await local.getPurchasesStats(
-        storeId,
-        startDate,
-        endDate,
-      );
+      final stats = await local.getPurchasesStats(storeId, startDate, endDate);
       return Success(stats);
     } catch (e) {
       return Error(CacheFailure(message: 'Error al obtener estadísticas'));
@@ -202,13 +196,13 @@ class PurchaseRepositoryImpl implements PurchaseRepository {
       if (result.isError) {
         return Error(NotFoundFailure());
       }
-      
+
       final supplier = result.valueOrNull!;
       final deactivated = supplier.copyWith(
         isActive: false,
         updatedAt: DateTime.now(),
       );
-      
+
       await remote.uploadSupplier(deactivated);
       return const Success(null);
     } catch (e) {
@@ -221,12 +215,14 @@ class PurchaseRepositoryImpl implements PurchaseRepository {
     try {
       // Obtener compras remotas para mantener cache
       await remote.getStorePurchases(storeId);
-      
+
       // Aquí se podría implementar lógica de merge
       // Por ahora solo retornamos éxito
       return const Success(null);
     } catch (e) {
-      return Error(ServerFailure(message: 'Error al sincronizar con el servidor'));
+      return Error(
+        ServerFailure(message: 'Error al sincronizar con el servidor'),
+      );
     }
   }
 
@@ -234,12 +230,15 @@ class PurchaseRepositoryImpl implements PurchaseRepository {
 
   void _syncPurchasesInBackground(String storeId) {
     // No esperar, ejecutar en segundo plano
-    remote.getStorePurchases(storeId).then((remotePurchases) {
-      // Aquí se podría implementar lógica de merge o actualización
-      // Por ahora solo obtiene para mantener cache actualizado
-    }).catchError((error) {
-      // Silenciar errores de sincronización en segundo plano
-    });
+    remote
+        .getStorePurchases(storeId)
+        .then((remotePurchases) {
+          // Aquí se podría implementar lógica de merge o actualización
+          // Por ahora solo obtiene para mantener cache actualizado
+        })
+        .catchError((error) {
+          // Silenciar errores de sincronización en segundo plano
+        });
   }
 
   void _uploadPurchaseInBackground(Purchase purchase) {

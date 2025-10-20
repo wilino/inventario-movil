@@ -12,10 +12,7 @@ import '../bloc/sale_state.dart';
 class NewSalePage extends StatelessWidget {
   final String storeId;
 
-  const NewSalePage({
-    super.key,
-    required this.storeId,
-  });
+  const NewSalePage({super.key, required this.storeId});
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +38,9 @@ class _NewSaleViewState extends State<NewSaleView> {
   final _notesController = TextEditingController();
   final _discountController = TextEditingController(text: '0');
   final _taxController = TextEditingController(text: '0');
-  
+
   final List<SaleItem> _items = [];
-  
+
   // Para el diálogo de agregar producto
   final _productNameController = TextEditingController();
   final _qtyController = TextEditingController(text: '1');
@@ -97,9 +94,9 @@ class _NewSaleViewState extends State<NewSaleView> {
             );
             Navigator.pop(context, true);
           } else if (state is SaleError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         child: Form(
@@ -142,10 +139,7 @@ class _NewSaleViewState extends State<NewSaleView> {
       children: [
         const Text(
           'Cliente',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         TextFormField(
@@ -153,9 +147,7 @@ class _NewSaleViewState extends State<NewSaleView> {
           decoration: InputDecoration(
             hintText: 'Nombre del cliente (opcional)',
             prefixIcon: const Icon(Icons.person),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
       ],
@@ -171,17 +163,11 @@ class _NewSaleViewState extends State<NewSaleView> {
           children: [
             const Text(
               'Productos',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Text(
               '${_items.length} items',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ],
         ),
@@ -196,7 +182,11 @@ class _NewSaleViewState extends State<NewSaleView> {
             child: Center(
               child: Column(
                 children: [
-                  Icon(Icons.shopping_cart_outlined, size: 48, color: Colors.grey[400]),
+                  Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 48,
+                    color: Colors.grey[400],
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     'No hay productos agregados',
@@ -224,9 +214,7 @@ class _NewSaleViewState extends State<NewSaleView> {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        leading: CircleAvatar(
-          child: Text('${item.qty.toInt()}'),
-        ),
+        leading: CircleAvatar(child: Text('${item.qty.toInt()}')),
         title: Text(
           item.productName,
           style: const TextStyle(fontWeight: FontWeight.w500),
@@ -239,10 +227,7 @@ class _NewSaleViewState extends State<NewSaleView> {
           children: [
             Text(
               '\$${NumberFormat('#,##0.00').format(item.total)}',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
@@ -264,10 +249,7 @@ class _NewSaleViewState extends State<NewSaleView> {
       children: [
         const Text(
           'Ajustes',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Row(
@@ -282,7 +264,9 @@ class _NewSaleViewState extends State<NewSaleView> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 onChanged: (_) => setState(() {}),
                 validator: (value) {
                   final val = double.tryParse(value ?? '');
@@ -304,7 +288,9 @@ class _NewSaleViewState extends State<NewSaleView> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 onChanged: (_) => setState(() {}),
                 validator: (value) {
                   final val = double.tryParse(value ?? '');
@@ -327,19 +313,14 @@ class _NewSaleViewState extends State<NewSaleView> {
       children: [
         const Text(
           'Notas',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         TextFormField(
           controller: _notesController,
           decoration: InputDecoration(
             hintText: 'Notas adicionales (opcional)',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           maxLines: 3,
         ),
@@ -364,8 +345,10 @@ class _NewSaleViewState extends State<NewSaleView> {
       child: Column(
         children: [
           _buildTotalRow('Subtotal', _subtotal),
-          if (_discount > 0) _buildTotalRow('Descuento', -_discount, color: Colors.orange),
-          if (_tax > 0) _buildTotalRow('Impuesto', (_subtotal - _discount) * _tax / 100),
+          if (_discount > 0)
+            _buildTotalRow('Descuento', -_discount, color: Colors.orange),
+          if (_tax > 0)
+            _buildTotalRow('Impuesto', (_subtotal - _discount) * _tax / 100),
           const Divider(height: 16),
           _buildTotalRow('Total', _total, isTotal: true),
         ],
@@ -373,7 +356,12 @@ class _NewSaleViewState extends State<NewSaleView> {
     );
   }
 
-  Widget _buildTotalRow(String label, double amount, {bool isTotal = false, Color? color}) {
+  Widget _buildTotalRow(
+    String label,
+    double amount, {
+    bool isTotal = false,
+    Color? color,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -430,7 +418,9 @@ class _NewSaleViewState extends State<NewSaleView> {
                         labelText: 'Cantidad',
                         border: OutlineInputBorder(),
                       ),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -442,7 +432,9 @@ class _NewSaleViewState extends State<NewSaleView> {
                         prefixText: '\$ ',
                         border: OutlineInputBorder(),
                       ),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                     ),
                   ),
                 ],
@@ -479,17 +471,17 @@ class _NewSaleViewState extends State<NewSaleView> {
 
     final qty = double.tryParse(_qtyController.text);
     if (qty == null || qty <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cantidad inválida')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Cantidad inválida')));
       return false;
     }
 
     final price = double.tryParse(_priceController.text);
     if (price == null || price <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Precio inválido')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Precio inválido')));
       return false;
     }
 
@@ -503,7 +495,8 @@ class _NewSaleViewState extends State<NewSaleView> {
     final total = qty * unitPrice;
 
     final item = SaleItem(
-      productId: const Uuid().v4(), // En producción, esto vendría de la búsqueda
+      productId: const Uuid()
+          .v4(), // En producción, esto vendría de la búsqueda
       variantId: null,
       productName: productName,
       qty: qty,
@@ -534,11 +527,11 @@ class _NewSaleViewState extends State<NewSaleView> {
         discount: _discount,
         tax: _tax,
         total: _total,
-        customer: _customerController.text.trim().isEmpty 
-            ? null 
+        customer: _customerController.text.trim().isEmpty
+            ? null
             : _customerController.text.trim(),
-        notes: _notesController.text.trim().isEmpty 
-            ? null 
+        notes: _notesController.text.trim().isEmpty
+            ? null
             : _notesController.text.trim(),
         at: DateTime.now(),
         createdAt: DateTime.now(),

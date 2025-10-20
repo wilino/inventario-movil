@@ -28,17 +28,17 @@ class Supplier extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        contactName,
-        email,
-        phone,
-        address,
-        notes,
-        createdAt,
-        updatedAt,
-        isActive,
-      ];
+    id,
+    name,
+    contactName,
+    email,
+    phone,
+    address,
+    notes,
+    createdAt,
+    updatedAt,
+    isActive,
+  ];
 
   Supplier copyWith({
     String? id,

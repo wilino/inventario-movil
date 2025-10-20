@@ -65,10 +65,7 @@ class SaleBloc extends Bloc<SaleEvent, SaleState> {
   }
 
   /// Maneja el evento de crear una venta
-  Future<void> _onCreateSale(
-    CreateSale event,
-    Emitter<SaleState> emit,
-  ) async {
+  Future<void> _onCreateSale(CreateSale event, Emitter<SaleState> emit) async {
     emit(SaleLoading());
 
     final result = await createSaleUseCase(event.sale);
@@ -80,10 +77,7 @@ class SaleBloc extends Bloc<SaleEvent, SaleState> {
   }
 
   /// Maneja el evento de cancelar una venta
-  Future<void> _onCancelSale(
-    CancelSale event,
-    Emitter<SaleState> emit,
-  ) async {
+  Future<void> _onCancelSale(CancelSale event, Emitter<SaleState> emit) async {
     emit(SaleLoading());
 
     final result = await repository.cancelSale(event.saleId);

@@ -51,7 +51,7 @@ Future<void> setupDependencies() async {
 
   // Sales Module
   _setupSalesModule();
-  
+
   // Purchases Module
   _setupPurchasesModule();
 }

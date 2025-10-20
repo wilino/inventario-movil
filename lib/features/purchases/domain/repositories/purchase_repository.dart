@@ -49,7 +49,7 @@ abstract class PurchaseRepository {
   Future<Result<void>> syncWithRemote(String storeId);
 
   // Métodos para proveedores
-  
+
   /// Obtiene todos los proveedores activos
   Future<Result<List<Supplier>>> getActiveSuppliers();
 

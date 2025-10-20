@@ -19,7 +19,9 @@ class CreatePurchaseUseCase {
 
     if (purchase.total <= 0) {
       return const Error(
-        ValidationFailure(message: 'El total de la compra debe ser mayor a cero'),
+        ValidationFailure(
+          message: 'El total de la compra debe ser mayor a cero',
+        ),
       );
     }
 

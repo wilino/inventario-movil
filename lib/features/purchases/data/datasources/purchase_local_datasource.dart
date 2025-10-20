@@ -10,10 +10,13 @@ class PurchaseLocalDataSource {
 
   /// Obtiene todas las compras de una tienda
   Future<List<domain.Purchase>> getStorePurchases(String storeId) async {
-    final purchases = await (db.select(db.purchases)
-          ..where((t) => t.storeId.equals(storeId) & t.isDeleted.equals(false))
-          ..orderBy([(t) => OrderingTerm.desc(t.at)]))
-        .get();
+    final purchases =
+        await (db.select(db.purchases)
+              ..where(
+                (t) => t.storeId.equals(storeId) & t.isDeleted.equals(false),
+              )
+              ..orderBy([(t) => OrderingTerm.desc(t.at)]))
+            .get();
 
     return Future.wait(purchases.map((purchase) => _mapToEntity(purchase)));
   }
@@ -24,23 +27,26 @@ class PurchaseLocalDataSource {
     DateTime startDate,
     DateTime endDate,
   ) async {
-    final purchases = await (db.select(db.purchases)
-          ..where((t) =>
-              t.storeId.equals(storeId) &
-              t.isDeleted.equals(false) &
-              t.at.isBiggerOrEqualValue(startDate) &
-              t.at.isSmallerOrEqualValue(endDate))
-          ..orderBy([(t) => OrderingTerm.desc(t.at)]))
-        .get();
+    final purchases =
+        await (db.select(db.purchases)
+              ..where(
+                (t) =>
+                    t.storeId.equals(storeId) &
+                    t.isDeleted.equals(false) &
+                    t.at.isBiggerOrEqualValue(startDate) &
+                    t.at.isSmallerOrEqualValue(endDate),
+              )
+              ..orderBy([(t) => OrderingTerm.desc(t.at)]))
+            .get();
 
     return Future.wait(purchases.map((purchase) => _mapToEntity(purchase)));
   }
 
   /// Obtiene una compra específica por ID
   Future<domain.Purchase?> getPurchaseById(String id) async {
-    final purchase = await (db.select(db.purchases)
-          ..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    final purchase = await (db.select(
+      db.purchases,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
 
     return purchase != null ? await _mapToEntity(purchase) : null;
   }
@@ -50,13 +56,16 @@ class PurchaseLocalDataSource {
     String storeId,
     String supplierId,
   ) async {
-    final purchases = await (db.select(db.purchases)
-          ..where((t) =>
-              t.storeId.equals(storeId) &
-              t.isDeleted.equals(false) &
-              t.supplierId.equals(supplierId))
-          ..orderBy([(t) => OrderingTerm.desc(t.at)]))
-        .get();
+    final purchases =
+        await (db.select(db.purchases)
+              ..where(
+                (t) =>
+                    t.storeId.equals(storeId) &
+                    t.isDeleted.equals(false) &
+                    t.supplierId.equals(supplierId),
+              )
+              ..orderBy([(t) => OrderingTerm.desc(t.at)]))
+            .get();
 
     return Future.wait(purchases.map((purchase) => _mapToEntity(purchase)));
   }
@@ -66,13 +75,16 @@ class PurchaseLocalDataSource {
     String storeId,
     String query,
   ) async {
-    final purchases = await (db.select(db.purchases)
-          ..where((t) =>
-              t.storeId.equals(storeId) &
-              t.isDeleted.equals(false) &
-              t.invoiceNumber.contains(query))
-          ..orderBy([(t) => OrderingTerm.desc(t.at)]))
-        .get();
+    final purchases =
+        await (db.select(db.purchases)
+              ..where(
+                (t) =>
+                    t.storeId.equals(storeId) &
+                    t.isDeleted.equals(false) &
+                    t.invoiceNumber.contains(query),
+              )
+              ..orderBy([(t) => OrderingTerm.desc(t.at)]))
+            .get();
 
     return Future.wait(purchases.map((purchase) => _mapToEntity(purchase)));
   }
@@ -81,7 +93,9 @@ class PurchaseLocalDataSource {
   Future<domain.Purchase> createPurchase(domain.Purchase purchase) async {
     await db.transaction(() async {
       // Insertar el encabezado de la compra
-      await db.into(db.purchases).insert(
+      await db
+          .into(db.purchases)
+          .insert(
             PurchasesCompanion.insert(
               id: purchase.id,
               storeId: purchase.storeId,
@@ -103,7 +117,9 @@ class PurchaseLocalDataSource {
 
       // Insertar los items de la compra
       for (final item in purchase.items) {
-        await db.into(db.purchaseItems).insert(
+        await db
+            .into(db.purchaseItems)
+            .insert(
               PurchaseItemsCompanion.insert(
                 id: '${purchase.id}_${item.productId}',
                 purchaseId: purchase.id,
@@ -161,13 +177,17 @@ class PurchaseLocalDataSource {
     DateTime? startDate,
     DateTime? endDate,
   ) async {
-    final start = startDate ?? DateTime.now().subtract(const Duration(days: 30));
+    final start =
+        startDate ?? DateTime.now().subtract(const Duration(days: 30));
     final end = endDate ?? DateTime.now();
 
     final purchases = await getPurchasesByDateRange(storeId, start, end);
 
     final totalPurchases = purchases.length;
-    final totalCost = purchases.fold<double>(0, (sum, purchase) => sum + purchase.total);
+    final totalCost = purchases.fold<double>(
+      0,
+      (sum, purchase) => sum + purchase.total,
+    );
     final averageCost = totalPurchases > 0 ? totalCost / totalPurchases : 0;
     final totalItems = purchases.fold<int>(
       0,
@@ -198,15 +218,17 @@ class PurchaseLocalDataSource {
     String? variantId,
     double qtyChange,
   ) async {
-    final inventory = await (db.select(db.inventory)
-          ..where((t) =>
-              t.storeId.equals(storeId) & t.productId.equals(productId)))
-        .getSingleOrNull();
+    final inventory =
+        await (db.select(db.inventory)..where(
+              (t) => t.storeId.equals(storeId) & t.productId.equals(productId),
+            ))
+            .getSingleOrNull();
 
     if (inventory != null) {
       final newQty = inventory.stockQty + qtyChange;
-      await (db.update(db.inventory)..where((t) => t.id.equals(inventory.id)))
-          .write(
+      await (db.update(
+        db.inventory,
+      )..where((t) => t.id.equals(inventory.id))).write(
         InventoryCompanion(
           stockQty: Value(newQty),
           updatedAt: Value(DateTime.now()),
@@ -217,9 +239,9 @@ class PurchaseLocalDataSource {
 
   /// Obtiene los items de una compra
   Future<List<domain.PurchaseItem>> _getPurchaseItems(String purchaseId) async {
-    final items = await (db.select(db.purchaseItems)
-          ..where((t) => t.purchaseId.equals(purchaseId)))
-        .get();
+    final items = await (db.select(
+      db.purchaseItems,
+    )..where((t) => t.purchaseId.equals(purchaseId))).get();
 
     return items.map((item) {
       return domain.PurchaseItem(

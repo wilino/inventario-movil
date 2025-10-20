@@ -12,10 +12,7 @@ import 'new_sale_page.dart';
 class SalesHistoryPage extends StatelessWidget {
   final String storeId;
 
-  const SalesHistoryPage({
-    super.key,
-    required this.storeId,
-  });
+  const SalesHistoryPage({super.key, required this.storeId});
 
   @override
   Widget build(BuildContext context) {
@@ -92,22 +89,19 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
-                    context.read<SaleBloc>().add(LoadStoreSales(widget.storeId));
+                    context.read<SaleBloc>().add(
+                      LoadStoreSales(widget.storeId),
+                    );
                   },
                 )
               : null,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
         onSubmitted: (value) {
           if (value.isNotEmpty) {
             context.read<SaleBloc>().add(
-                  SearchSalesByCustomer(
-                    storeId: widget.storeId,
-                    query: value,
-                  ),
-                );
+              SearchSalesByCustomer(storeId: widget.storeId, query: value),
+            );
           }
         },
       ),
@@ -154,7 +148,12 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
     );
   }
 
-  Widget _buildStatItem(String label, String value, IconData icon, Color color) {
+  Widget _buildStatItem(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Column(
       children: [
         Icon(icon, color: color, size: 28),
@@ -167,13 +166,7 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
             color: color,
           ),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
       ],
     );
   }
@@ -182,9 +175,9 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
     return BlocConsumer<SaleBloc, SaleState>(
       listener: (context, state) {
         if (state is SaleError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         } else if (state is SaleCancelled) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Venta cancelada exitosamente')),
@@ -208,10 +201,7 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
                   const SizedBox(height: 16),
                   Text(
                     'No hay ventas registradas',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -235,7 +225,7 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
 
   Widget _buildSaleCard(BuildContext context, Sale sale) {
     final dateFormat = DateFormat('dd/MM/yyyy HH:mm');
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -284,10 +274,7 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
                       ),
                       Text(
                         '${sale.itemCount} items',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                     ],
                   ),
@@ -297,14 +284,15 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.local_offer, size: 14, color: Colors.orange[700]),
+                    Icon(
+                      Icons.local_offer,
+                      size: 14,
+                      color: Colors.orange[700],
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       'Descuento: \$${NumberFormat('#,##0.00').format(sale.discount)}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.orange[700],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.orange[700]),
                     ),
                   ],
                 ),
@@ -331,7 +319,7 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
 
   void _showSaleDetail(BuildContext context, Sale sale) {
     final dateFormat = DateFormat('dd/MM/yyyy HH:mm');
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -361,10 +349,7 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
                 children: [
                   const Text(
                     'Detalle de Venta',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   IconButton(
                     icon: const Icon(Icons.close),
@@ -378,25 +363,34 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
                 controller: scrollController,
                 padding: const EdgeInsets.all(16),
                 children: [
-                  _buildDetailRow('Cliente', sale.customer ?? 'Cliente general'),
+                  _buildDetailRow(
+                    'Cliente',
+                    sale.customer ?? 'Cliente general',
+                  ),
                   _buildDetailRow('Fecha', dateFormat.format(sale.at)),
                   const Divider(height: 32),
                   const Text(
                     'Productos',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   ...sale.items.map((item) => _buildItemRow(item)),
                   const Divider(height: 32),
-                  _buildDetailRow('Subtotal', '\$${NumberFormat('#,##0.00').format(sale.subtotal)}'),
+                  _buildDetailRow(
+                    'Subtotal',
+                    '\$${NumberFormat('#,##0.00').format(sale.subtotal)}',
+                  ),
                   if (sale.discount > 0)
-                    _buildDetailRow('Descuento', '-\$${NumberFormat('#,##0.00').format(sale.discount)}',
-                        valueColor: Colors.orange),
+                    _buildDetailRow(
+                      'Descuento',
+                      '-\$${NumberFormat('#,##0.00').format(sale.discount)}',
+                      valueColor: Colors.orange,
+                    ),
                   if (sale.tax > 0)
-                    _buildDetailRow('Impuesto', '\$${NumberFormat('#,##0.00').format(sale.tax)}'),
+                    _buildDetailRow(
+                      'Impuesto',
+                      '\$${NumberFormat('#,##0.00').format(sale.tax)}',
+                    ),
                   const Divider(height: 24),
                   _buildDetailRow(
                     'Total',
@@ -439,7 +433,12 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value, {bool isTotal = false, Color? valueColor}) {
+  Widget _buildDetailRow(
+    String label,
+    String value, {
+    bool isTotal = false,
+    Color? valueColor,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -481,19 +480,14 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
                 ),
                 Text(
                   '${item.qty.toStringAsFixed(0)} x \$${NumberFormat('#,##0.00').format(item.unitPrice)}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
             ),
           ),
           Text(
             '\$${NumberFormat('#,##0.00').format(item.total)}',
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -550,15 +544,15 @@ class _SalesHistoryViewState extends State<SalesHistoryView> {
         _startDate = picked.start;
         _endDate = picked.end;
       });
-      
+
       if (mounted) {
         context.read<SaleBloc>().add(
-              FilterSalesByDateRange(
-                storeId: widget.storeId,
-                startDate: picked.start,
-                endDate: picked.end,
-              ),
-            );
+          FilterSalesByDateRange(
+            storeId: widget.storeId,
+            startDate: picked.start,
+            endDate: picked.end,
+          ),
+        );
       }
     }
   }

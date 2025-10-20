@@ -40,23 +40,23 @@ class Purchase extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        storeId,
-        supplierId,
-        supplierName,
-        authorUserId,
-        items,
-        subtotal,
-        discount,
-        tax,
-        total,
-        invoiceNumber,
-        notes,
-        at,
-        createdAt,
-        updatedAt,
-        isDeleted,
-      ];
+    id,
+    storeId,
+    supplierId,
+    supplierName,
+    authorUserId,
+    items,
+    subtotal,
+    discount,
+    tax,
+    total,
+    invoiceNumber,
+    notes,
+    at,
+    createdAt,
+    updatedAt,
+    isDeleted,
+  ];
 
   /// Calcula el total de una compra
   static double calculateTotal(
@@ -70,7 +70,8 @@ class Purchase extends Equatable {
   }
 
   /// Retorna el número total de items en la compra
-  int get itemCount => items.fold<int>(0, (sum, item) => sum + item.qty.toInt());
+  int get itemCount =>
+      items.fold<int>(0, (sum, item) => sum + item.qty.toInt());
 
   Purchase copyWith({
     String? id,
@@ -131,13 +132,13 @@ class PurchaseItem extends Equatable {
 
   @override
   List<Object?> get props => [
-        productId,
-        variantId,
-        productName,
-        qty,
-        unitCost,
-        total,
-      ];
+    productId,
+    variantId,
+    productName,
+    qty,
+    unitCost,
+    total,
+  ];
 
   PurchaseItem copyWith({
     String? productId,

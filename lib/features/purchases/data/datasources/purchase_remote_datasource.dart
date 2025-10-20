@@ -17,9 +17,7 @@ class PurchaseRemoteDataSource {
         .eq('is_deleted', false)
         .order('at', ascending: false);
 
-    return (response as List)
-        .map((json) => _mapToEntity(json))
-        .toList();
+    return (response as List).map((json) => _mapToEntity(json)).toList();
   }
 
   /// Obtiene compras por rango de fechas desde Supabase
@@ -37,9 +35,7 @@ class PurchaseRemoteDataSource {
         .lte('at', endDate.toIso8601String())
         .order('at', ascending: false);
 
-    return (response as List)
-        .map((json) => _mapToEntity(json))
-        .toList();
+    return (response as List).map((json) => _mapToEntity(json)).toList();
   }
 
   /// Obtiene una compra específica por ID desde Supabase
@@ -66,9 +62,7 @@ class PurchaseRemoteDataSource {
         .eq('supplier_id', supplierId)
         .order('at', ascending: false);
 
-    return (response as List)
-        .map((json) => _mapToEntity(json))
-        .toList();
+    return (response as List).map((json) => _mapToEntity(json)).toList();
   }
 
   /// Busca compras por número de factura en Supabase
@@ -84,9 +78,7 @@ class PurchaseRemoteDataSource {
         .ilike('invoice_number', '%$query%')
         .order('at', ascending: false);
 
-    return (response as List)
-        .map((json) => _mapToEntity(json))
-        .toList();
+    return (response as List).map((json) => _mapToEntity(json)).toList();
   }
 
   /// Sube una compra a Supabase
@@ -127,10 +119,13 @@ class PurchaseRemoteDataSource {
 
   /// Cancela una compra en Supabase (soft delete)
   Future<void> cancelPurchase(String id) async {
-    await client.from('purchases').update({
-      'is_deleted': true,
-      'updated_at': DateTime.now().toIso8601String(),
-    }).eq('id', id);
+    await client
+        .from('purchases')
+        .update({
+          'is_deleted': true,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', id);
   }
 
   /// Obtiene todas las compras de una tienda (incluyendo eliminadas)
@@ -141,9 +136,7 @@ class PurchaseRemoteDataSource {
         .eq('store_id', storeId)
         .order('at', ascending: false);
 
-    return (response as List)
-        .map((json) => _mapToEntity(json))
-        .toList();
+    return (response as List).map((json) => _mapToEntity(json)).toList();
   }
 
   /// Obtiene proveedores activos desde Supabase
@@ -177,16 +170,20 @@ class PurchaseRemoteDataSource {
 
   /// Mapea de JSON a Entity (Purchase)
   domain.Purchase _mapToEntity(Map<String, dynamic> json) {
-    final items = (json['purchase_items'] as List?)
-        ?.map((itemJson) => domain.PurchaseItem(
-              productId: itemJson['product_id'],
-              variantId: itemJson['variant_id'],
-              productName: itemJson['product_name'],
-              qty: (itemJson['qty'] as num).toDouble(),
-              unitCost: (itemJson['unit_cost'] as num).toDouble(),
-              total: (itemJson['total'] as num).toDouble(),
-            ))
-        .toList() ?? [];
+    final items =
+        (json['purchase_items'] as List?)
+            ?.map(
+              (itemJson) => domain.PurchaseItem(
+                productId: itemJson['product_id'],
+                variantId: itemJson['variant_id'],
+                productName: itemJson['product_name'],
+                qty: (itemJson['qty'] as num).toDouble(),
+                unitCost: (itemJson['unit_cost'] as num).toDouble(),
+                total: (itemJson['total'] as num).toDouble(),
+              ),
+            )
+            .toList() ??
+        [];
 
     return domain.Purchase(
       id: json['id'],

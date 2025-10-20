@@ -66,11 +66,7 @@ class FilterPurchasesByDateRange extends PurchaseEvent {
   final DateTime startDate;
   final DateTime endDate;
 
-  const FilterPurchasesByDateRange(
-    this.storeId,
-    this.startDate,
-    this.endDate,
-  );
+  const FilterPurchasesByDateRange(this.storeId, this.startDate, this.endDate);
 
   @override
   List<Object> get props => [storeId, startDate, endDate];
@@ -104,11 +100,7 @@ class LoadPurchasesStats extends PurchaseEvent {
   final DateTime? startDate;
   final DateTime? endDate;
 
-  const LoadPurchasesStats(
-    this.storeId, {
-    this.startDate,
-    this.endDate,
-  });
+  const LoadPurchasesStats(this.storeId, {this.startDate, this.endDate});
 
   @override
   List<Object?> get props => [storeId, startDate, endDate];

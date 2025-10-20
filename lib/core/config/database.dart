@@ -186,16 +186,26 @@ class SaleItems extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Tabla de Transferencias
+/// Tabla de Transferencias (con workflow de estados)
 class Transfers extends Table {
   TextColumn get id => text()();
   TextColumn get fromStoreId => text()();
+  TextColumn get fromStoreName => text()();
   TextColumn get toStoreId => text()();
+  TextColumn get toStoreName => text()();
   TextColumn get productId => text()();
   TextColumn get variantId => text().nullable()();
-  IntColumn get qty => integer()();
-  DateTimeColumn get at => dateTime()();
+  TextColumn get productName => text()();
+  RealColumn get qty => real()();
+  TextColumn get status =>
+      text()(); // pending, in_transit, completed, cancelled
   TextColumn get authorUserId => text()();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get requestedAt => dateTime()();
+  DateTimeColumn get sentAt => dateTime().nullable()();
+  DateTimeColumn get receivedAt => dateTime().nullable()();
+  DateTimeColumn get cancelledAt => dateTime().nullable()();
+  TextColumn get cancellationReason => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
 
@@ -236,7 +246,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -252,13 +262,18 @@ class AppDatabase extends _$AppDatabase {
       if (from < 4) {
         // Crear tabla de proveedores
         await migrator.createTable(suppliers);
-        
+
         // Eliminar tabla antigua de Purchases
         await migrator.deleteTable('purchases');
-        
+
         // Crear nuevas tablas de Purchases (encabezado + detalle)
         await migrator.createTable(purchases);
         await migrator.createTable(purchaseItems);
+      }
+      if (from < 5) {
+        // Actualizar tabla de Transfers con workflow de estados
+        await migrator.deleteTable('transfers');
+        await migrator.createTable(transfers);
       }
     },
   );
