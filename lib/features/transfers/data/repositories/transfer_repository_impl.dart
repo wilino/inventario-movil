@@ -23,7 +23,9 @@ class TransferRepositoryImpl implements TransferRepository {
       return Success(transfers);
     } catch (e) {
       return Error(
-        CacheFailure(message: 'Error al obtener transferencias: ${e.toString()}'),
+        CacheFailure(
+          message: 'Error al obtener transferencias: ${e.toString()}',
+        ),
       );
     }
   }
@@ -64,7 +66,8 @@ class TransferRepositoryImpl implements TransferRepository {
     } catch (e) {
       return Error(
         CacheFailure(
-          message: 'Error al obtener transferencias pendientes: ${e.toString()}',
+          message:
+              'Error al obtener transferencias pendientes: ${e.toString()}',
         ),
       );
     }
@@ -78,7 +81,8 @@ class TransferRepositoryImpl implements TransferRepository {
     } catch (e) {
       return Error(
         CacheFailure(
-          message: 'Error al obtener transferencias en tránsito: ${e.toString()}',
+          message:
+              'Error al obtener transferencias en tránsito: ${e.toString()}',
         ),
       );
     }
@@ -89,12 +93,16 @@ class TransferRepositoryImpl implements TransferRepository {
     try {
       final transfer = await localDataSource.getTransferById(id);
       if (transfer == null) {
-        return const Error(NotFoundFailure(message: 'Transferencia no encontrada'));
+        return const Error(
+          NotFoundFailure(message: 'Transferencia no encontrada'),
+        );
       }
       return Success(transfer);
     } catch (e) {
       return Error(
-        CacheFailure(message: 'Error al obtener transferencia: ${e.toString()}'),
+        CacheFailure(
+          message: 'Error al obtener transferencia: ${e.toString()}',
+        ),
       );
     }
   }
@@ -145,7 +153,9 @@ class TransferRepositoryImpl implements TransferRepository {
       return Success(received);
     } catch (e) {
       return Error(
-        CacheFailure(message: 'Error al recibir transferencia: ${e.toString()}'),
+        CacheFailure(
+          message: 'Error al recibir transferencia: ${e.toString()}',
+        ),
       );
     }
   }
@@ -162,7 +172,9 @@ class TransferRepositoryImpl implements TransferRepository {
       return Success(cancelled);
     } catch (e) {
       return Error(
-        CacheFailure(message: 'Error al cancelar transferencia: ${e.toString()}'),
+        CacheFailure(
+          message: 'Error al cancelar transferencia: ${e.toString()}',
+        ),
       );
     }
   }
@@ -194,12 +206,16 @@ class TransferRepositoryImpl implements TransferRepository {
       final lastSync = DateTime.now().subtract(const Duration(days: 7));
 
       // Obtener transferencias actualizadas desde el servidor
-      final remoteTransfers =
-          await remoteDataSource.syncTransfersSince(storeId, lastSync);
+      final remoteTransfers = await remoteDataSource.syncTransfersSince(
+        storeId,
+        lastSync,
+      );
 
       // Actualizar la base de datos local con las transferencias remotas
       for (final transfer in remoteTransfers) {
-        final localTransfer = await localDataSource.getTransferById(transfer.id);
+        final localTransfer = await localDataSource.getTransferById(
+          transfer.id,
+        );
 
         if (localTransfer == null) {
           // Nueva transferencia del servidor

@@ -27,6 +27,17 @@ import '../../features/purchases/domain/usecases/get_store_purchases_usecase.dar
 import '../../features/purchases/domain/usecases/get_today_purchases_usecase.dart';
 import '../../features/purchases/presentation/bloc/purchase_bloc.dart';
 
+// Transfers
+import '../../features/transfers/data/datasources/transfer_local_datasource.dart';
+import '../../features/transfers/data/datasources/transfer_remote_datasource.dart';
+import '../../features/transfers/data/repositories/transfer_repository_impl.dart';
+import '../../features/transfers/domain/repositories/transfer_repository.dart';
+import '../../features/transfers/domain/usecases/create_transfer_usecase.dart';
+import '../../features/transfers/domain/usecases/get_pending_transfers_usecase.dart';
+import '../../features/transfers/domain/usecases/get_store_transfers_usecase.dart';
+import '../../features/transfers/domain/usecases/get_transfers_stats_usecase.dart';
+import '../../features/transfers/presentation/bloc/transfer_bloc.dart';
+
 final GetIt getIt = GetIt.instance;
 
 /// Configura las dependencias de la aplicación
@@ -54,6 +65,9 @@ Future<void> setupDependencies() async {
 
   // Purchases Module
   _setupPurchasesModule();
+
+  // Transfers Module
+  _setupTransfersModule();
 }
 
 /// Configura el módulo de Ventas
@@ -144,6 +158,51 @@ void _setupPurchasesModule() {
       getPurchasesStatsUseCase: getIt<GetPurchasesStatsUseCase>(),
       getActiveSuppliersUseCase: getIt<GetActiveSuppliersUseCase>(),
       repository: getIt<PurchaseRepository>(),
+    ),
+  );
+}
+
+/// Configura el módulo de Transferencias
+void _setupTransfersModule() {
+  // Data Sources
+  getIt.registerLazySingleton<TransferLocalDataSource>(
+    () => TransferLocalDataSource(getIt<AppDatabase>()),
+  );
+
+  getIt.registerLazySingleton<TransferRemoteDataSource>(
+    () => TransferRemoteDataSource(getIt<SupabaseClient>()),
+  );
+
+  // Repository
+  getIt.registerLazySingleton<TransferRepository>(
+    () => TransferRepositoryImpl(
+      localDataSource: getIt<TransferLocalDataSource>(),
+      remoteDataSource: getIt<TransferRemoteDataSource>(),
+    ),
+  );
+
+  // Use Cases
+  getIt.registerLazySingleton(
+    () => CreateTransferUseCase(getIt<TransferRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetStoreTransfersUseCase(getIt<TransferRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetPendingTransfersUseCase(getIt<TransferRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetTransfersStatsUseCase(getIt<TransferRepository>()),
+  );
+
+  // BLoC - Factory para crear nueva instancia cada vez que se necesite
+  getIt.registerFactory(
+    () => TransferBloc(
+      repository: getIt<TransferRepository>(),
+      createTransferUseCase: getIt<CreateTransferUseCase>(),
+      getStoreTransfersUseCase: getIt<GetStoreTransfersUseCase>(),
+      getPendingTransfersUseCase: getIt<GetPendingTransfersUseCase>(),
+      getTransfersStatsUseCase: getIt<GetTransfersStatsUseCase>(),
     ),
   );
 }

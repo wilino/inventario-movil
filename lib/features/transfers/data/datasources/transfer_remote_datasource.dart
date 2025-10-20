@@ -42,8 +42,11 @@ class TransferRemoteDataSource {
 
   /// Obtiene una transferencia por ID
   Future<domain.Transfer?> getTransferById(String id) async {
-    final response =
-        await supabase.from('transfers').select().eq('id', id).maybeSingle();
+    final response = await supabase
+        .from('transfers')
+        .select()
+        .eq('id', id)
+        .maybeSingle();
 
     return response != null ? _mapToEntity(response) : null;
   }
