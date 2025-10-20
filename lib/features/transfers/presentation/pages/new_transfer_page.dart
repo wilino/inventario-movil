@@ -11,10 +11,7 @@ import '../bloc/transfer_state.dart';
 class NewTransferPage extends StatefulWidget {
   final String storeId;
 
-  const NewTransferPage({
-    super.key,
-    required this.storeId,
-  });
+  const NewTransferPage({super.key, required this.storeId});
 
   @override
   State<NewTransferPage> createState() => _NewTransferPageState();
@@ -57,9 +54,7 @@ class _NewTransferPageState extends State<NewTransferPage> {
     return BlocProvider(
       create: (_) => getIt<TransferBloc>(),
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Nueva Transferencia'),
-        ),
+        appBar: AppBar(title: const Text('Nueva Transferencia')),
         body: BlocListener<TransferBloc, TransferState>(
           listener: (context, state) {
             if (state is TransferCreated) {
@@ -121,10 +116,7 @@ class _NewTransferPageState extends State<NewTransferPage> {
                 const SizedBox(width: 8),
                 const Text(
                   'Almacén de Destino',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -137,16 +129,19 @@ class _NewTransferPageState extends State<NewTransferPage> {
               ),
               value: _destinationStoreId,
               items: availableStores
-                  .map((store) => DropdownMenuItem(
-                        value: store['id'],
-                        child: Text(store['name']!),
-                      ))
+                  .map(
+                    (store) => DropdownMenuItem(
+                      value: store['id'],
+                      child: Text(store['name']!),
+                    ),
+                  )
                   .toList(),
               onChanged: (value) {
                 setState(() {
                   _destinationStoreId = value;
-                  _destinationStoreName = _stores
-                      .firstWhere((s) => s['id'] == value)['name']!;
+                  _destinationStoreName = _stores.firstWhere(
+                    (s) => s['id'] == value,
+                  )['name']!;
                 });
               },
               validator: (value) {
@@ -175,10 +170,7 @@ class _NewTransferPageState extends State<NewTransferPage> {
                 const SizedBox(width: 8),
                 const Text(
                   'Producto',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -191,23 +183,25 @@ class _NewTransferPageState extends State<NewTransferPage> {
               ),
               value: _productId,
               items: _products
-                  .map((product) => DropdownMenuItem<String>(
-                        value: product['id'] as String,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(product['name'] as String),
-                            Text(
-                              'Stock disponible: ${product['stock']}',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[600],
-                              ),
+                  .map(
+                    (product) => DropdownMenuItem<String>(
+                      value: product['id'] as String,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(product['name'] as String),
+                          Text(
+                            'Stock disponible: ${product['stock']}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
                             ),
-                          ],
-                        ),
-                      ))
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                   .toList(),
               onChanged: (value) {
                 setState(() {
@@ -242,10 +236,7 @@ class _NewTransferPageState extends State<NewTransferPage> {
                 const SizedBox(width: 8),
                 const Text(
                   'Cantidad',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -257,7 +248,9 @@ class _NewTransferPageState extends State<NewTransferPage> {
                 prefixIcon: Icon(Icons.format_list_numbered),
                 suffixText: 'unidades',
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               initialValue: _quantity.toString(),
               onChanged: (value) {
                 setState(() {
@@ -273,7 +266,9 @@ class _NewTransferPageState extends State<NewTransferPage> {
                   return 'La cantidad debe ser mayor a 0';
                 }
                 if (_productId != null) {
-                  final product = _products.firstWhere((p) => p['id'] == _productId);
+                  final product = _products.firstWhere(
+                    (p) => p['id'] == _productId,
+                  );
                   if (qty > product['stock']) {
                     return 'Stock insuficiente (disponible: ${product['stock']})';
                   }
@@ -300,10 +295,7 @@ class _NewTransferPageState extends State<NewTransferPage> {
                 const SizedBox(width: 8),
                 const Text(
                   'Notas (Opcional)',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -342,10 +334,7 @@ class _NewTransferPageState extends State<NewTransferPage> {
           children: [
             const Text(
               'Resumen de Transferencia',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const Divider(height: 16),
             _buildSummaryRow('Producto', _productName),
@@ -359,10 +348,7 @@ class _NewTransferPageState extends State<NewTransferPage> {
                     children: [
                       Text(
                         'Origen',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                       Text(
                         currentStoreName,
@@ -378,10 +364,7 @@ class _NewTransferPageState extends State<NewTransferPage> {
                     children: [
                       Text(
                         'Destino',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                       Text(
                         _destinationStoreName,
@@ -405,14 +388,8 @@ class _NewTransferPageState extends State<NewTransferPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: TextStyle(color: Colors.grey[700]),
-          ),
-          Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
+          Text(label, style: TextStyle(color: Colors.grey[700])),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
         ],
       ),
     );

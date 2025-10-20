@@ -12,10 +12,7 @@ import 'new_transfer_page.dart';
 class TransfersHistoryPage extends StatefulWidget {
   final String storeId;
 
-  const TransfersHistoryPage({
-    super.key,
-    required this.storeId,
-  });
+  const TransfersHistoryPage({super.key, required this.storeId});
 
   @override
   State<TransfersHistoryPage> createState() => _TransfersHistoryPageState();
@@ -46,8 +43,8 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
         _currentFilter = _getStatusFromTab(_tabController.index);
       });
       context.read<TransferBloc>().add(
-            FilterTransfersByStatusEvent(widget.storeId, _currentFilter),
-          );
+        FilterTransfersByStatusEvent(widget.storeId, _currentFilter),
+      );
     }
   }
 
@@ -82,8 +79,8 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
               icon: const Icon(Icons.sync),
               onPressed: () {
                 context.read<TransferBloc>().add(
-                      SyncTransfersEvent(widget.storeId),
-                    );
+                  SyncTransfersEvent(widget.storeId),
+                );
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Sincronizando...')),
                 );
@@ -105,9 +102,7 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
         body: Column(
           children: [
             _buildStatsCards(),
-            Expanded(
-              child: _buildTransfersList(),
-            ),
+            Expanded(child: _buildTransfersList()),
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
@@ -120,8 +115,8 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
             );
             if (result == true && mounted) {
               context.read<TransferBloc>().add(
-                    LoadStoreTransfersEvent(widget.storeId),
-                  );
+                LoadStoreTransfersEvent(widget.storeId),
+              );
             }
           },
           icon: const Icon(Icons.add),
@@ -194,9 +189,9 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
             const SizedBox(height: 8),
             Text(
               value,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             Text(
               label,
@@ -214,10 +209,7 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
       listener: (context, state) {
         if (state is TransferError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );
         } else if (state is TransfersSynced) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -227,8 +219,8 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
             ),
           );
           context.read<TransferBloc>().add(
-                LoadStoreTransfersEvent(widget.storeId),
-              );
+            LoadStoreTransfersEvent(widget.storeId),
+          );
         }
       },
       builder: (context, state) {
@@ -242,18 +234,11 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.swap_horiz,
-                    size: 64,
-                    color: Colors.grey[400],
-                  ),
+                  Icon(Icons.swap_horiz, size: 64, color: Colors.grey[400]),
                   const SizedBox(height: 16),
                   Text(
                     'No hay transferencias',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -263,8 +248,8 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
           return RefreshIndicator(
             onRefresh: () async {
               context.read<TransferBloc>().add(
-                    SyncTransfersEvent(widget.storeId),
-                  );
+                SyncTransfersEvent(widget.storeId),
+              );
             },
             child: ListView.builder(
               itemCount: state.transfers.length,
@@ -361,10 +346,7 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
               const SizedBox(height: 8),
               Text(
                 'Solicitada: ${DateFormat('dd/MM/yyyy HH:mm').format(transfer.requestedAt)}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             ],
           ),
@@ -399,10 +381,7 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
     return Chip(
       label: Text(
         label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 12,
-        ),
+        style: const TextStyle(color: Colors.white, fontSize: 12),
       ),
       backgroundColor: color,
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -472,12 +451,16 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
                   if (transfer.receivedAt != null)
                     _buildDetailRow(
                       'Recibida',
-                      DateFormat('dd/MM/yyyy HH:mm').format(transfer.receivedAt!),
+                      DateFormat(
+                        'dd/MM/yyyy HH:mm',
+                      ).format(transfer.receivedAt!),
                     ),
                   if (transfer.cancelledAt != null) ...[
                     _buildDetailRow(
                       'Cancelada',
-                      DateFormat('dd/MM/yyyy HH:mm').format(transfer.cancelledAt!),
+                      DateFormat(
+                        'dd/MM/yyyy HH:mm',
+                      ).format(transfer.cancelledAt!),
                     ),
                     if (transfer.cancellationReason != null)
                       _buildDetailRow('Motivo', transfer.cancellationReason!),
@@ -638,8 +621,8 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
             onPressed: () {
               Navigator.pop(dialogContext);
               context.read<TransferBloc>().add(
-                    ReceiveTransferEvent(transfer.id),
-                  );
+                ReceiveTransferEvent(transfer.id),
+              );
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Transferencia recibida')),
               );
@@ -692,11 +675,8 @@ class _TransfersHistoryPageState extends State<TransfersHistoryPage>
               }
               Navigator.pop(dialogContext);
               context.read<TransferBloc>().add(
-                    CancelTransferEvent(
-                      transfer.id,
-                      reasonController.text.trim(),
-                    ),
-                  );
+                CancelTransferEvent(transfer.id, reasonController.text.trim()),
+              );
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Transferencia cancelada')),
               );
