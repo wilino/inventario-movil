@@ -63,9 +63,9 @@ class _ProductListPageState extends State<ProductListPage> {
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
-              context
-                  .read<ProductBloc>()
-                  .add(ProductDeleteRequested(product.id));
+              context.read<ProductBloc>().add(
+                ProductDeleteRequested(product.id),
+              );
             },
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Eliminar'),
@@ -167,13 +167,15 @@ class _ProductListPageState extends State<ProductListPage> {
                   margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor:
-                          Theme.of(context).colorScheme.primaryContainer,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer,
                       child: Text(
                         product.name[0].toUpperCase(),
                         style: TextStyle(
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onPrimaryContainer,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -213,7 +215,10 @@ class _ProductListPageState extends State<ProductListPage> {
                       children: [
                         if (!product.isActive)
                           Chip(
-                            label: const Text('Inactivo', style: TextStyle(fontSize: 10)),
+                            label: const Text(
+                              'Inactivo',
+                              style: TextStyle(fontSize: 10),
+                            ),
                             backgroundColor: Colors.grey[300],
                             padding: EdgeInsets.zero,
                           ),
@@ -236,8 +241,10 @@ class _ProductListPageState extends State<ProductListPage> {
                                 children: [
                                   Icon(Icons.delete, color: Colors.red),
                                   SizedBox(width: 8),
-                                  Text('Eliminar',
-                                      style: TextStyle(color: Colors.red)),
+                                  Text(
+                                    'Eliminar',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                                 ],
                               ),
                             ),

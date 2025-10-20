@@ -2029,30 +2029,32 @@ class $InventoryTable extends Inventory
     'stockQty',
   );
   @override
-  late final GeneratedColumn<int> stockQty = GeneratedColumn<int>(
+  late final GeneratedColumn<double> stockQty = GeneratedColumn<double>(
     'stock_qty',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.double,
     requiredDuringInsert: true,
   );
   static const VerificationMeta _minQtyMeta = const VerificationMeta('minQty');
   @override
-  late final GeneratedColumn<int> minQty = GeneratedColumn<int>(
+  late final GeneratedColumn<double> minQty = GeneratedColumn<double>(
     'min_qty',
     aliasedName,
-    true,
-    type: DriftSqlType.int,
+    false,
+    type: DriftSqlType.double,
     requiredDuringInsert: false,
+    defaultValue: const Constant(0),
   );
   static const VerificationMeta _maxQtyMeta = const VerificationMeta('maxQty');
   @override
-  late final GeneratedColumn<int> maxQty = GeneratedColumn<int>(
+  late final GeneratedColumn<double> maxQty = GeneratedColumn<double>(
     'max_qty',
     aliasedName,
-    true,
-    type: DriftSqlType.int,
+    false,
+    type: DriftSqlType.double,
     requiredDuringInsert: false,
+    defaultValue: const Constant(100),
   );
   static const VerificationMeta _updatedAtMeta = const VerificationMeta(
     'updatedAt',
@@ -2169,17 +2171,17 @@ class $InventoryTable extends Inventory
         data['${effectivePrefix}variant_id'],
       ),
       stockQty: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.double,
         data['${effectivePrefix}stock_qty'],
       )!,
       minQty: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.double,
         data['${effectivePrefix}min_qty'],
-      ),
+      )!,
       maxQty: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.double,
         data['${effectivePrefix}max_qty'],
-      ),
+      )!,
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
@@ -2198,9 +2200,9 @@ class InventoryData extends DataClass implements Insertable<InventoryData> {
   final String storeId;
   final String productId;
   final String? variantId;
-  final int stockQty;
-  final int? minQty;
-  final int? maxQty;
+  final double stockQty;
+  final double minQty;
+  final double maxQty;
   final DateTime updatedAt;
   const InventoryData({
     required this.id,
@@ -2208,8 +2210,8 @@ class InventoryData extends DataClass implements Insertable<InventoryData> {
     required this.productId,
     this.variantId,
     required this.stockQty,
-    this.minQty,
-    this.maxQty,
+    required this.minQty,
+    required this.maxQty,
     required this.updatedAt,
   });
   @override
@@ -2221,13 +2223,9 @@ class InventoryData extends DataClass implements Insertable<InventoryData> {
     if (!nullToAbsent || variantId != null) {
       map['variant_id'] = Variable<String>(variantId);
     }
-    map['stock_qty'] = Variable<int>(stockQty);
-    if (!nullToAbsent || minQty != null) {
-      map['min_qty'] = Variable<int>(minQty);
-    }
-    if (!nullToAbsent || maxQty != null) {
-      map['max_qty'] = Variable<int>(maxQty);
-    }
+    map['stock_qty'] = Variable<double>(stockQty);
+    map['min_qty'] = Variable<double>(minQty);
+    map['max_qty'] = Variable<double>(maxQty);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
@@ -2241,12 +2239,8 @@ class InventoryData extends DataClass implements Insertable<InventoryData> {
           ? const Value.absent()
           : Value(variantId),
       stockQty: Value(stockQty),
-      minQty: minQty == null && nullToAbsent
-          ? const Value.absent()
-          : Value(minQty),
-      maxQty: maxQty == null && nullToAbsent
-          ? const Value.absent()
-          : Value(maxQty),
+      minQty: Value(minQty),
+      maxQty: Value(maxQty),
       updatedAt: Value(updatedAt),
     );
   }
@@ -2261,9 +2255,9 @@ class InventoryData extends DataClass implements Insertable<InventoryData> {
       storeId: serializer.fromJson<String>(json['storeId']),
       productId: serializer.fromJson<String>(json['productId']),
       variantId: serializer.fromJson<String?>(json['variantId']),
-      stockQty: serializer.fromJson<int>(json['stockQty']),
-      minQty: serializer.fromJson<int?>(json['minQty']),
-      maxQty: serializer.fromJson<int?>(json['maxQty']),
+      stockQty: serializer.fromJson<double>(json['stockQty']),
+      minQty: serializer.fromJson<double>(json['minQty']),
+      maxQty: serializer.fromJson<double>(json['maxQty']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
@@ -2275,9 +2269,9 @@ class InventoryData extends DataClass implements Insertable<InventoryData> {
       'storeId': serializer.toJson<String>(storeId),
       'productId': serializer.toJson<String>(productId),
       'variantId': serializer.toJson<String?>(variantId),
-      'stockQty': serializer.toJson<int>(stockQty),
-      'minQty': serializer.toJson<int?>(minQty),
-      'maxQty': serializer.toJson<int?>(maxQty),
+      'stockQty': serializer.toJson<double>(stockQty),
+      'minQty': serializer.toJson<double>(minQty),
+      'maxQty': serializer.toJson<double>(maxQty),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
@@ -2287,9 +2281,9 @@ class InventoryData extends DataClass implements Insertable<InventoryData> {
     String? storeId,
     String? productId,
     Value<String?> variantId = const Value.absent(),
-    int? stockQty,
-    Value<int?> minQty = const Value.absent(),
-    Value<int?> maxQty = const Value.absent(),
+    double? stockQty,
+    double? minQty,
+    double? maxQty,
     DateTime? updatedAt,
   }) => InventoryData(
     id: id ?? this.id,
@@ -2297,8 +2291,8 @@ class InventoryData extends DataClass implements Insertable<InventoryData> {
     productId: productId ?? this.productId,
     variantId: variantId.present ? variantId.value : this.variantId,
     stockQty: stockQty ?? this.stockQty,
-    minQty: minQty.present ? minQty.value : this.minQty,
-    maxQty: maxQty.present ? maxQty.value : this.maxQty,
+    minQty: minQty ?? this.minQty,
+    maxQty: maxQty ?? this.maxQty,
     updatedAt: updatedAt ?? this.updatedAt,
   );
   InventoryData copyWithCompanion(InventoryCompanion data) {
@@ -2359,9 +2353,9 @@ class InventoryCompanion extends UpdateCompanion<InventoryData> {
   final Value<String> storeId;
   final Value<String> productId;
   final Value<String?> variantId;
-  final Value<int> stockQty;
-  final Value<int?> minQty;
-  final Value<int?> maxQty;
+  final Value<double> stockQty;
+  final Value<double> minQty;
+  final Value<double> maxQty;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
   const InventoryCompanion({
@@ -2380,7 +2374,7 @@ class InventoryCompanion extends UpdateCompanion<InventoryData> {
     required String storeId,
     required String productId,
     this.variantId = const Value.absent(),
-    required int stockQty,
+    required double stockQty,
     this.minQty = const Value.absent(),
     this.maxQty = const Value.absent(),
     required DateTime updatedAt,
@@ -2395,9 +2389,9 @@ class InventoryCompanion extends UpdateCompanion<InventoryData> {
     Expression<String>? storeId,
     Expression<String>? productId,
     Expression<String>? variantId,
-    Expression<int>? stockQty,
-    Expression<int>? minQty,
-    Expression<int>? maxQty,
+    Expression<double>? stockQty,
+    Expression<double>? minQty,
+    Expression<double>? maxQty,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
   }) {
@@ -2419,9 +2413,9 @@ class InventoryCompanion extends UpdateCompanion<InventoryData> {
     Value<String>? storeId,
     Value<String>? productId,
     Value<String?>? variantId,
-    Value<int>? stockQty,
-    Value<int?>? minQty,
-    Value<int?>? maxQty,
+    Value<double>? stockQty,
+    Value<double>? minQty,
+    Value<double>? maxQty,
     Value<DateTime>? updatedAt,
     Value<int>? rowid,
   }) {
@@ -2454,13 +2448,13 @@ class InventoryCompanion extends UpdateCompanion<InventoryData> {
       map['variant_id'] = Variable<String>(variantId.value);
     }
     if (stockQty.present) {
-      map['stock_qty'] = Variable<int>(stockQty.value);
+      map['stock_qty'] = Variable<double>(stockQty.value);
     }
     if (minQty.present) {
-      map['min_qty'] = Variable<int>(minQty.value);
+      map['min_qty'] = Variable<double>(minQty.value);
     }
     if (maxQty.present) {
-      map['max_qty'] = Variable<int>(maxQty.value);
+      map['max_qty'] = Variable<double>(maxQty.value);
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
@@ -2482,6 +2476,623 @@ class InventoryCompanion extends UpdateCompanion<InventoryData> {
           ..write('minQty: $minQty, ')
           ..write('maxQty: $maxQty, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $InventoryAdjustmentsTable extends InventoryAdjustments
+    with TableInfo<$InventoryAdjustmentsTable, InventoryAdjustment> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $InventoryAdjustmentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _inventoryIdMeta = const VerificationMeta(
+    'inventoryId',
+  );
+  @override
+  late final GeneratedColumn<String> inventoryId = GeneratedColumn<String>(
+    'inventory_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _previousQtyMeta = const VerificationMeta(
+    'previousQty',
+  );
+  @override
+  late final GeneratedColumn<double> previousQty = GeneratedColumn<double>(
+    'previous_qty',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _adjustmentQtyMeta = const VerificationMeta(
+    'adjustmentQty',
+  );
+  @override
+  late final GeneratedColumn<double> adjustmentQty = GeneratedColumn<double>(
+    'adjustment_qty',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _newQtyMeta = const VerificationMeta('newQty');
+  @override
+  late final GeneratedColumn<double> newQty = GeneratedColumn<double>(
+    'new_qty',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _reasonMeta = const VerificationMeta('reason');
+  @override
+  late final GeneratedColumn<String> reason = GeneratedColumn<String>(
+    'reason',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    inventoryId,
+    userId,
+    type,
+    previousQty,
+    adjustmentQty,
+    newQty,
+    reason,
+    notes,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'inventory_adjustments';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<InventoryAdjustment> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('inventory_id')) {
+      context.handle(
+        _inventoryIdMeta,
+        inventoryId.isAcceptableOrUnknown(
+          data['inventory_id']!,
+          _inventoryIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_inventoryIdMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('previous_qty')) {
+      context.handle(
+        _previousQtyMeta,
+        previousQty.isAcceptableOrUnknown(
+          data['previous_qty']!,
+          _previousQtyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_previousQtyMeta);
+    }
+    if (data.containsKey('adjustment_qty')) {
+      context.handle(
+        _adjustmentQtyMeta,
+        adjustmentQty.isAcceptableOrUnknown(
+          data['adjustment_qty']!,
+          _adjustmentQtyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_adjustmentQtyMeta);
+    }
+    if (data.containsKey('new_qty')) {
+      context.handle(
+        _newQtyMeta,
+        newQty.isAcceptableOrUnknown(data['new_qty']!, _newQtyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_newQtyMeta);
+    }
+    if (data.containsKey('reason')) {
+      context.handle(
+        _reasonMeta,
+        reason.isAcceptableOrUnknown(data['reason']!, _reasonMeta),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  InventoryAdjustment map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return InventoryAdjustment(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      inventoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}inventory_id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      previousQty: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}previous_qty'],
+      )!,
+      adjustmentQty: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}adjustment_qty'],
+      )!,
+      newQty: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}new_qty'],
+      )!,
+      reason: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reason'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $InventoryAdjustmentsTable createAlias(String alias) {
+    return $InventoryAdjustmentsTable(attachedDatabase, alias);
+  }
+}
+
+class InventoryAdjustment extends DataClass
+    implements Insertable<InventoryAdjustment> {
+  final String id;
+  final String inventoryId;
+  final String userId;
+  final String type;
+  final double previousQty;
+  final double adjustmentQty;
+  final double newQty;
+  final String? reason;
+  final String? notes;
+  final DateTime createdAt;
+  const InventoryAdjustment({
+    required this.id,
+    required this.inventoryId,
+    required this.userId,
+    required this.type,
+    required this.previousQty,
+    required this.adjustmentQty,
+    required this.newQty,
+    this.reason,
+    this.notes,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['inventory_id'] = Variable<String>(inventoryId);
+    map['user_id'] = Variable<String>(userId);
+    map['type'] = Variable<String>(type);
+    map['previous_qty'] = Variable<double>(previousQty);
+    map['adjustment_qty'] = Variable<double>(adjustmentQty);
+    map['new_qty'] = Variable<double>(newQty);
+    if (!nullToAbsent || reason != null) {
+      map['reason'] = Variable<String>(reason);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  InventoryAdjustmentsCompanion toCompanion(bool nullToAbsent) {
+    return InventoryAdjustmentsCompanion(
+      id: Value(id),
+      inventoryId: Value(inventoryId),
+      userId: Value(userId),
+      type: Value(type),
+      previousQty: Value(previousQty),
+      adjustmentQty: Value(adjustmentQty),
+      newQty: Value(newQty),
+      reason: reason == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reason),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory InventoryAdjustment.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return InventoryAdjustment(
+      id: serializer.fromJson<String>(json['id']),
+      inventoryId: serializer.fromJson<String>(json['inventoryId']),
+      userId: serializer.fromJson<String>(json['userId']),
+      type: serializer.fromJson<String>(json['type']),
+      previousQty: serializer.fromJson<double>(json['previousQty']),
+      adjustmentQty: serializer.fromJson<double>(json['adjustmentQty']),
+      newQty: serializer.fromJson<double>(json['newQty']),
+      reason: serializer.fromJson<String?>(json['reason']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'inventoryId': serializer.toJson<String>(inventoryId),
+      'userId': serializer.toJson<String>(userId),
+      'type': serializer.toJson<String>(type),
+      'previousQty': serializer.toJson<double>(previousQty),
+      'adjustmentQty': serializer.toJson<double>(adjustmentQty),
+      'newQty': serializer.toJson<double>(newQty),
+      'reason': serializer.toJson<String?>(reason),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  InventoryAdjustment copyWith({
+    String? id,
+    String? inventoryId,
+    String? userId,
+    String? type,
+    double? previousQty,
+    double? adjustmentQty,
+    double? newQty,
+    Value<String?> reason = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    DateTime? createdAt,
+  }) => InventoryAdjustment(
+    id: id ?? this.id,
+    inventoryId: inventoryId ?? this.inventoryId,
+    userId: userId ?? this.userId,
+    type: type ?? this.type,
+    previousQty: previousQty ?? this.previousQty,
+    adjustmentQty: adjustmentQty ?? this.adjustmentQty,
+    newQty: newQty ?? this.newQty,
+    reason: reason.present ? reason.value : this.reason,
+    notes: notes.present ? notes.value : this.notes,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  InventoryAdjustment copyWithCompanion(InventoryAdjustmentsCompanion data) {
+    return InventoryAdjustment(
+      id: data.id.present ? data.id.value : this.id,
+      inventoryId: data.inventoryId.present
+          ? data.inventoryId.value
+          : this.inventoryId,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      type: data.type.present ? data.type.value : this.type,
+      previousQty: data.previousQty.present
+          ? data.previousQty.value
+          : this.previousQty,
+      adjustmentQty: data.adjustmentQty.present
+          ? data.adjustmentQty.value
+          : this.adjustmentQty,
+      newQty: data.newQty.present ? data.newQty.value : this.newQty,
+      reason: data.reason.present ? data.reason.value : this.reason,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InventoryAdjustment(')
+          ..write('id: $id, ')
+          ..write('inventoryId: $inventoryId, ')
+          ..write('userId: $userId, ')
+          ..write('type: $type, ')
+          ..write('previousQty: $previousQty, ')
+          ..write('adjustmentQty: $adjustmentQty, ')
+          ..write('newQty: $newQty, ')
+          ..write('reason: $reason, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    inventoryId,
+    userId,
+    type,
+    previousQty,
+    adjustmentQty,
+    newQty,
+    reason,
+    notes,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is InventoryAdjustment &&
+          other.id == this.id &&
+          other.inventoryId == this.inventoryId &&
+          other.userId == this.userId &&
+          other.type == this.type &&
+          other.previousQty == this.previousQty &&
+          other.adjustmentQty == this.adjustmentQty &&
+          other.newQty == this.newQty &&
+          other.reason == this.reason &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt);
+}
+
+class InventoryAdjustmentsCompanion
+    extends UpdateCompanion<InventoryAdjustment> {
+  final Value<String> id;
+  final Value<String> inventoryId;
+  final Value<String> userId;
+  final Value<String> type;
+  final Value<double> previousQty;
+  final Value<double> adjustmentQty;
+  final Value<double> newQty;
+  final Value<String?> reason;
+  final Value<String?> notes;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const InventoryAdjustmentsCompanion({
+    this.id = const Value.absent(),
+    this.inventoryId = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.type = const Value.absent(),
+    this.previousQty = const Value.absent(),
+    this.adjustmentQty = const Value.absent(),
+    this.newQty = const Value.absent(),
+    this.reason = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  InventoryAdjustmentsCompanion.insert({
+    required String id,
+    required String inventoryId,
+    required String userId,
+    required String type,
+    required double previousQty,
+    required double adjustmentQty,
+    required double newQty,
+    this.reason = const Value.absent(),
+    this.notes = const Value.absent(),
+    required DateTime createdAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       inventoryId = Value(inventoryId),
+       userId = Value(userId),
+       type = Value(type),
+       previousQty = Value(previousQty),
+       adjustmentQty = Value(adjustmentQty),
+       newQty = Value(newQty),
+       createdAt = Value(createdAt);
+  static Insertable<InventoryAdjustment> custom({
+    Expression<String>? id,
+    Expression<String>? inventoryId,
+    Expression<String>? userId,
+    Expression<String>? type,
+    Expression<double>? previousQty,
+    Expression<double>? adjustmentQty,
+    Expression<double>? newQty,
+    Expression<String>? reason,
+    Expression<String>? notes,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (inventoryId != null) 'inventory_id': inventoryId,
+      if (userId != null) 'user_id': userId,
+      if (type != null) 'type': type,
+      if (previousQty != null) 'previous_qty': previousQty,
+      if (adjustmentQty != null) 'adjustment_qty': adjustmentQty,
+      if (newQty != null) 'new_qty': newQty,
+      if (reason != null) 'reason': reason,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  InventoryAdjustmentsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? inventoryId,
+    Value<String>? userId,
+    Value<String>? type,
+    Value<double>? previousQty,
+    Value<double>? adjustmentQty,
+    Value<double>? newQty,
+    Value<String?>? reason,
+    Value<String?>? notes,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return InventoryAdjustmentsCompanion(
+      id: id ?? this.id,
+      inventoryId: inventoryId ?? this.inventoryId,
+      userId: userId ?? this.userId,
+      type: type ?? this.type,
+      previousQty: previousQty ?? this.previousQty,
+      adjustmentQty: adjustmentQty ?? this.adjustmentQty,
+      newQty: newQty ?? this.newQty,
+      reason: reason ?? this.reason,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (inventoryId.present) {
+      map['inventory_id'] = Variable<String>(inventoryId.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (previousQty.present) {
+      map['previous_qty'] = Variable<double>(previousQty.value);
+    }
+    if (adjustmentQty.present) {
+      map['adjustment_qty'] = Variable<double>(adjustmentQty.value);
+    }
+    if (newQty.present) {
+      map['new_qty'] = Variable<double>(newQty.value);
+    }
+    if (reason.present) {
+      map['reason'] = Variable<String>(reason.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InventoryAdjustmentsCompanion(')
+          ..write('id: $id, ')
+          ..write('inventoryId: $inventoryId, ')
+          ..write('userId: $userId, ')
+          ..write('type: $type, ')
+          ..write('previousQty: $previousQty, ')
+          ..write('adjustmentQty: $adjustmentQty, ')
+          ..write('newQty: $newQty, ')
+          ..write('reason: $reason, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4815,6 +5426,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $InventoryTable inventory = $InventoryTable(this);
+  late final $InventoryAdjustmentsTable inventoryAdjustments =
+      $InventoryAdjustmentsTable(this);
   late final $PurchasesTable purchases = $PurchasesTable(this);
   late final $SalesTable sales = $SalesTable(this);
   late final $TransfersTable transfers = $TransfersTable(this);
@@ -4829,6 +5442,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     products,
     productVariants,
     inventory,
+    inventoryAdjustments,
     purchases,
     sales,
     transfers,
@@ -5852,9 +6466,9 @@ typedef $$InventoryTableCreateCompanionBuilder =
       required String storeId,
       required String productId,
       Value<String?> variantId,
-      required int stockQty,
-      Value<int?> minQty,
-      Value<int?> maxQty,
+      required double stockQty,
+      Value<double> minQty,
+      Value<double> maxQty,
       required DateTime updatedAt,
       Value<int> rowid,
     });
@@ -5864,9 +6478,9 @@ typedef $$InventoryTableUpdateCompanionBuilder =
       Value<String> storeId,
       Value<String> productId,
       Value<String?> variantId,
-      Value<int> stockQty,
-      Value<int?> minQty,
-      Value<int?> maxQty,
+      Value<double> stockQty,
+      Value<double> minQty,
+      Value<double> maxQty,
       Value<DateTime> updatedAt,
       Value<int> rowid,
     });
@@ -5900,17 +6514,17 @@ class $$InventoryTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get stockQty => $composableBuilder(
+  ColumnFilters<double> get stockQty => $composableBuilder(
     column: $table.stockQty,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get minQty => $composableBuilder(
+  ColumnFilters<double> get minQty => $composableBuilder(
     column: $table.minQty,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get maxQty => $composableBuilder(
+  ColumnFilters<double> get maxQty => $composableBuilder(
     column: $table.maxQty,
     builder: (column) => ColumnFilters(column),
   );
@@ -5950,17 +6564,17 @@ class $$InventoryTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get stockQty => $composableBuilder(
+  ColumnOrderings<double> get stockQty => $composableBuilder(
     column: $table.stockQty,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get minQty => $composableBuilder(
+  ColumnOrderings<double> get minQty => $composableBuilder(
     column: $table.minQty,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get maxQty => $composableBuilder(
+  ColumnOrderings<double> get maxQty => $composableBuilder(
     column: $table.maxQty,
     builder: (column) => ColumnOrderings(column),
   );
@@ -5992,13 +6606,13 @@ class $$InventoryTableAnnotationComposer
   GeneratedColumn<String> get variantId =>
       $composableBuilder(column: $table.variantId, builder: (column) => column);
 
-  GeneratedColumn<int> get stockQty =>
+  GeneratedColumn<double> get stockQty =>
       $composableBuilder(column: $table.stockQty, builder: (column) => column);
 
-  GeneratedColumn<int> get minQty =>
+  GeneratedColumn<double> get minQty =>
       $composableBuilder(column: $table.minQty, builder: (column) => column);
 
-  GeneratedColumn<int> get maxQty =>
+  GeneratedColumn<double> get maxQty =>
       $composableBuilder(column: $table.maxQty, builder: (column) => column);
 
   GeneratedColumn<DateTime> get updatedAt =>
@@ -6040,9 +6654,9 @@ class $$InventoryTableTableManager
                 Value<String> storeId = const Value.absent(),
                 Value<String> productId = const Value.absent(),
                 Value<String?> variantId = const Value.absent(),
-                Value<int> stockQty = const Value.absent(),
-                Value<int?> minQty = const Value.absent(),
-                Value<int?> maxQty = const Value.absent(),
+                Value<double> stockQty = const Value.absent(),
+                Value<double> minQty = const Value.absent(),
+                Value<double> maxQty = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => InventoryCompanion(
@@ -6062,9 +6676,9 @@ class $$InventoryTableTableManager
                 required String storeId,
                 required String productId,
                 Value<String?> variantId = const Value.absent(),
-                required int stockQty,
-                Value<int?> minQty = const Value.absent(),
-                Value<int?> maxQty = const Value.absent(),
+                required double stockQty,
+                Value<double> minQty = const Value.absent(),
+                Value<double> maxQty = const Value.absent(),
                 required DateTime updatedAt,
                 Value<int> rowid = const Value.absent(),
               }) => InventoryCompanion.insert(
@@ -6101,6 +6715,323 @@ typedef $$InventoryTableProcessedTableManager =
         BaseReferences<_$AppDatabase, $InventoryTable, InventoryData>,
       ),
       InventoryData,
+      PrefetchHooks Function()
+    >;
+typedef $$InventoryAdjustmentsTableCreateCompanionBuilder =
+    InventoryAdjustmentsCompanion Function({
+      required String id,
+      required String inventoryId,
+      required String userId,
+      required String type,
+      required double previousQty,
+      required double adjustmentQty,
+      required double newQty,
+      Value<String?> reason,
+      Value<String?> notes,
+      required DateTime createdAt,
+      Value<int> rowid,
+    });
+typedef $$InventoryAdjustmentsTableUpdateCompanionBuilder =
+    InventoryAdjustmentsCompanion Function({
+      Value<String> id,
+      Value<String> inventoryId,
+      Value<String> userId,
+      Value<String> type,
+      Value<double> previousQty,
+      Value<double> adjustmentQty,
+      Value<double> newQty,
+      Value<String?> reason,
+      Value<String?> notes,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+
+class $$InventoryAdjustmentsTableFilterComposer
+    extends Composer<_$AppDatabase, $InventoryAdjustmentsTable> {
+  $$InventoryAdjustmentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get inventoryId => $composableBuilder(
+    column: $table.inventoryId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get previousQty => $composableBuilder(
+    column: $table.previousQty,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get adjustmentQty => $composableBuilder(
+    column: $table.adjustmentQty,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get newQty => $composableBuilder(
+    column: $table.newQty,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$InventoryAdjustmentsTableOrderingComposer
+    extends Composer<_$AppDatabase, $InventoryAdjustmentsTable> {
+  $$InventoryAdjustmentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get inventoryId => $composableBuilder(
+    column: $table.inventoryId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get previousQty => $composableBuilder(
+    column: $table.previousQty,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get adjustmentQty => $composableBuilder(
+    column: $table.adjustmentQty,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get newQty => $composableBuilder(
+    column: $table.newQty,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$InventoryAdjustmentsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $InventoryAdjustmentsTable> {
+  $$InventoryAdjustmentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get inventoryId => $composableBuilder(
+    column: $table.inventoryId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<double> get previousQty => $composableBuilder(
+    column: $table.previousQty,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get adjustmentQty => $composableBuilder(
+    column: $table.adjustmentQty,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get newQty =>
+      $composableBuilder(column: $table.newQty, builder: (column) => column);
+
+  GeneratedColumn<String> get reason =>
+      $composableBuilder(column: $table.reason, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$InventoryAdjustmentsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $InventoryAdjustmentsTable,
+          InventoryAdjustment,
+          $$InventoryAdjustmentsTableFilterComposer,
+          $$InventoryAdjustmentsTableOrderingComposer,
+          $$InventoryAdjustmentsTableAnnotationComposer,
+          $$InventoryAdjustmentsTableCreateCompanionBuilder,
+          $$InventoryAdjustmentsTableUpdateCompanionBuilder,
+          (
+            InventoryAdjustment,
+            BaseReferences<
+              _$AppDatabase,
+              $InventoryAdjustmentsTable,
+              InventoryAdjustment
+            >,
+          ),
+          InventoryAdjustment,
+          PrefetchHooks Function()
+        > {
+  $$InventoryAdjustmentsTableTableManager(
+    _$AppDatabase db,
+    $InventoryAdjustmentsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$InventoryAdjustmentsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$InventoryAdjustmentsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$InventoryAdjustmentsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> inventoryId = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<String> type = const Value.absent(),
+                Value<double> previousQty = const Value.absent(),
+                Value<double> adjustmentQty = const Value.absent(),
+                Value<double> newQty = const Value.absent(),
+                Value<String?> reason = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => InventoryAdjustmentsCompanion(
+                id: id,
+                inventoryId: inventoryId,
+                userId: userId,
+                type: type,
+                previousQty: previousQty,
+                adjustmentQty: adjustmentQty,
+                newQty: newQty,
+                reason: reason,
+                notes: notes,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String inventoryId,
+                required String userId,
+                required String type,
+                required double previousQty,
+                required double adjustmentQty,
+                required double newQty,
+                Value<String?> reason = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                required DateTime createdAt,
+                Value<int> rowid = const Value.absent(),
+              }) => InventoryAdjustmentsCompanion.insert(
+                id: id,
+                inventoryId: inventoryId,
+                userId: userId,
+                type: type,
+                previousQty: previousQty,
+                adjustmentQty: adjustmentQty,
+                newQty: newQty,
+                reason: reason,
+                notes: notes,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$InventoryAdjustmentsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $InventoryAdjustmentsTable,
+      InventoryAdjustment,
+      $$InventoryAdjustmentsTableFilterComposer,
+      $$InventoryAdjustmentsTableOrderingComposer,
+      $$InventoryAdjustmentsTableAnnotationComposer,
+      $$InventoryAdjustmentsTableCreateCompanionBuilder,
+      $$InventoryAdjustmentsTableUpdateCompanionBuilder,
+      (
+        InventoryAdjustment,
+        BaseReferences<
+          _$AppDatabase,
+          $InventoryAdjustmentsTable,
+          InventoryAdjustment
+        >,
+      ),
+      InventoryAdjustment,
       PrefetchHooks Function()
     >;
 typedef $$PurchasesTableCreateCompanionBuilder =
@@ -7241,6 +8172,8 @@ class $AppDatabaseManager {
       $$ProductVariantsTableTableManager(_db, _db.productVariants);
   $$InventoryTableTableManager get inventory =>
       $$InventoryTableTableManager(_db, _db.inventory);
+  $$InventoryAdjustmentsTableTableManager get inventoryAdjustments =>
+      $$InventoryAdjustmentsTableTableManager(_db, _db.inventoryAdjustments);
   $$PurchasesTableTableManager get purchases =>
       $$PurchasesTableTableManager(_db, _db.purchases);
   $$SalesTableTableManager get sales =>

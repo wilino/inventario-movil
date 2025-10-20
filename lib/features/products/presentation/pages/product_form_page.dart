@@ -184,33 +184,36 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 if (textEditingValue.text.isEmpty) {
                   return _suggestedCategories;
                 }
-                return _suggestedCategories.where((category) =>
-                    category.toLowerCase().contains(
-                        textEditingValue.text.toLowerCase()));
-              },
-              onSelected: (value) => _categoryController.text = value,
-              fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                _categoryController.addListener(() {
-                  controller.text = _categoryController.text;
-                });
-                return TextFormField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  decoration: const InputDecoration(
-                    labelText: 'Categoría *',
-                    hintText: 'Selecciona o escribe una categoría',
-                    prefixIcon: Icon(Icons.category),
-                    border: OutlineInputBorder(),
+                return _suggestedCategories.where(
+                  (category) => category.toLowerCase().contains(
+                    textEditingValue.text.toLowerCase(),
                   ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'La categoría es requerida';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) => _categoryController.text = value,
                 );
               },
+              onSelected: (value) => _categoryController.text = value,
+              fieldViewBuilder:
+                  (context, controller, focusNode, onFieldSubmitted) {
+                    _categoryController.addListener(() {
+                      controller.text = _categoryController.text;
+                    });
+                    return TextFormField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      decoration: const InputDecoration(
+                        labelText: 'Categoría *',
+                        hintText: 'Selecciona o escribe una categoría',
+                        prefixIcon: Icon(Icons.category),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'La categoría es requerida';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) => _categoryController.text = value,
+                    );
+                  },
             ),
             const SizedBox(height: 16),
 
@@ -227,7 +230,9 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       prefixIcon: Icon(Icons.attach_money),
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Requerido';
@@ -252,7 +257,9 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       prefixIcon: Icon(Icons.sell),
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Requerido';
@@ -276,33 +283,36 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 if (textEditingValue.text.isEmpty) {
                   return _suggestedUnits;
                 }
-                return _suggestedUnits.where((unit) =>
-                    unit.toLowerCase().contains(
-                        textEditingValue.text.toLowerCase()));
-              },
-              onSelected: (value) => _unitController.text = value,
-              fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                _unitController.addListener(() {
-                  controller.text = _unitController.text;
-                });
-                return TextFormField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  decoration: const InputDecoration(
-                    labelText: 'Unidad de Medida *',
-                    hintText: 'Unidad, Pieza, Set, etc.',
-                    prefixIcon: Icon(Icons.straighten),
-                    border: OutlineInputBorder(),
+                return _suggestedUnits.where(
+                  (unit) => unit.toLowerCase().contains(
+                    textEditingValue.text.toLowerCase(),
                   ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'La unidad es requerida';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) => _unitController.text = value,
                 );
               },
+              onSelected: (value) => _unitController.text = value,
+              fieldViewBuilder:
+                  (context, controller, focusNode, onFieldSubmitted) {
+                    _unitController.addListener(() {
+                      controller.text = _unitController.text;
+                    });
+                    return TextFormField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      decoration: const InputDecoration(
+                        labelText: 'Unidad de Medida *',
+                        hintText: 'Unidad, Pieza, Set, etc.',
+                        prefixIcon: Icon(Icons.straighten),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'La unidad es requerida';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) => _unitController.text = value,
+                    );
+                  },
             ),
             const SizedBox(height: 16),
 

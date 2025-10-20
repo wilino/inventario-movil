@@ -71,10 +71,27 @@ class Inventory extends Table {
   TextColumn get storeId => text()();
   TextColumn get productId => text()();
   TextColumn get variantId => text().nullable()();
-  IntColumn get stockQty => integer()();
-  IntColumn get minQty => integer().nullable()();
-  IntColumn get maxQty => integer().nullable()();
+  RealColumn get stockQty => real()();
+  RealColumn get minQty => real().withDefault(const Constant(0))();
+  RealColumn get maxQty => real().withDefault(const Constant(100))();
   DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Tabla de Ajustes de Inventario (Historial)
+class InventoryAdjustments extends Table {
+  TextColumn get id => text()();
+  TextColumn get inventoryId => text()();
+  TextColumn get userId => text()();
+  TextColumn get type => text()(); // 'increment' | 'decrement' | 'set'
+  RealColumn get previousQty => real()();
+  RealColumn get adjustmentQty => real()();
+  RealColumn get newQty => real()();
+  TextColumn get reason => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -151,6 +168,7 @@ class PendingOps extends Table {
     Products,
     ProductVariants,
     Inventory,
+    InventoryAdjustments,
     Purchases,
     Sales,
     Transfers,
@@ -161,7 +179,17 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+  
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) {
+        // Migrar de IntColumn a RealColumn para stockQty, minQty, maxQty
+        await migrator.createTable(inventoryAdjustments);
+      }
+    },
+  );
 }
 
 /// Abre la conexión a la base de datos SQLite

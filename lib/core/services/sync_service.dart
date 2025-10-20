@@ -208,9 +208,11 @@ class SyncService {
                 isActive: Value(product['is_active'] as bool? ?? true),
                 createdAt: DateTime.parse(product['created_at'] as String),
                 updatedAt: DateTime.parse(product['updated_at'] as String),
-                deletedAt: Value(product['deleted_at'] != null
-                    ? DateTime.parse(product['deleted_at'] as String)
-                    : null),
+                deletedAt: Value(
+                  product['deleted_at'] != null
+                      ? DateTime.parse(product['deleted_at'] as String)
+                      : null,
+                ),
               ),
             );
       }
