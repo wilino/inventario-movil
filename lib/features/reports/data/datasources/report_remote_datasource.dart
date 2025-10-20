@@ -1,7 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Fuente de datos remota para reportes
-/// 
+///
 /// Nota: Los reportes se generan localmente desde la base de datos SQLite.
 /// Esta clase está preparada para futuras funcionalidades como:
 /// - Exportar reportes a servidor
@@ -21,7 +21,10 @@ class ReportRemoteDataSource {
 
   /// Exporta reporte al servidor para compartir
   /// (Funcionalidad futura)
-  Future<String> exportToServer(String reportType, Map<String, dynamic> data) async {
+  Future<String> exportToServer(
+    String reportType,
+    Map<String, dynamic> data,
+  ) async {
     // TODO: Implementar exportación a servidor
     throw UnimplementedError('exportToServer no implementado aún');
   }

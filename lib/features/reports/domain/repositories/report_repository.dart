@@ -25,9 +25,7 @@ abstract class ReportRepository {
   });
 
   /// Genera reporte de inventario
-  Future<Result<InventoryReport>> getInventoryReport({
-    required String storeId,
-  });
+  Future<Result<InventoryReport>> getInventoryReport({required String storeId});
 
   /// Genera reporte de transferencias
   Future<Result<TransfersReport>> getTransfersReport({

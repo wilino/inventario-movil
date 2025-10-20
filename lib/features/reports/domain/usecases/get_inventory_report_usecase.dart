@@ -8,9 +8,7 @@ class GetInventoryReportUseCase {
 
   GetInventoryReportUseCase(this.repository);
 
-  Future<Result<InventoryReport>> call({
-    required String storeId,
-  }) async {
+  Future<Result<InventoryReport>> call({required String storeId}) async {
     return await repository.getInventoryReport(storeId: storeId);
   }
 }

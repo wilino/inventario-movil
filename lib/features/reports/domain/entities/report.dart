@@ -24,15 +24,15 @@ class SalesReport extends Equatable {
 
   @override
   List<Object?> get props => [
-        startDate,
-        endDate,
-        totalSales,
-        totalTransactions,
-        averageTicket,
-        salesByDay,
-        topProducts,
-        salesByStore,
-      ];
+    startDate,
+    endDate,
+    totalSales,
+    totalTransactions,
+    averageTicket,
+    salesByDay,
+    topProducts,
+    salesByStore,
+  ];
 }
 
 /// Entity que representa un reporte de compras
@@ -59,15 +59,15 @@ class PurchasesReport extends Equatable {
 
   @override
   List<Object?> get props => [
-        startDate,
-        endDate,
-        totalPurchases,
-        totalTransactions,
-        averagePurchase,
-        purchasesByDay,
-        topSuppliers,
-        purchasesByStore,
-      ];
+    startDate,
+    endDate,
+    totalPurchases,
+    totalTransactions,
+    averagePurchase,
+    purchasesByDay,
+    topSuppliers,
+    purchasesByStore,
+  ];
 }
 
 /// Entity que representa un reporte de inventario
@@ -94,15 +94,15 @@ class InventoryReport extends Equatable {
 
   @override
   List<Object?> get props => [
-        generatedAt,
-        totalProducts,
-        totalValue,
-        lowStockProducts,
-        outOfStockProducts,
-        inventoryByStore,
-        productsByCategory,
-        lowStockItems,
-      ];
+    generatedAt,
+    totalProducts,
+    totalValue,
+    lowStockProducts,
+    outOfStockProducts,
+    inventoryByStore,
+    productsByCategory,
+    lowStockItems,
+  ];
 }
 
 /// Entity que representa un reporte de transferencias
@@ -131,16 +131,16 @@ class TransfersReport extends Equatable {
 
   @override
   List<Object?> get props => [
-        startDate,
-        endDate,
-        totalTransfers,
-        pendingTransfers,
-        inTransitTransfers,
-        completedTransfers,
-        cancelledTransfers,
-        transfersByStore,
-        transfersByDay,
-      ];
+    startDate,
+    endDate,
+    totalTransfers,
+    pendingTransfers,
+    inTransitTransfers,
+    completedTransfers,
+    cancelledTransfers,
+    transfersByStore,
+    transfersByDay,
+  ];
 }
 
 /// Entity que representa el dashboard general
@@ -175,17 +175,17 @@ class DashboardData extends Equatable {
 
   @override
   List<Object?> get props => [
-        generatedAt,
-        totalRevenue,
-        totalCosts,
-        profit,
-        profitMargin,
-        totalSales,
-        totalPurchases,
-        totalTransfers,
-        lowStockAlerts,
-        revenueByDay,
-        topSellingProducts,
-        storePerformance,
-      ];
+    generatedAt,
+    totalRevenue,
+    totalCosts,
+    profit,
+    profitMargin,
+    totalSales,
+    totalPurchases,
+    totalTransfers,
+    lowStockAlerts,
+    revenueByDay,
+    topSellingProducts,
+    storePerformance,
+  ];
 }

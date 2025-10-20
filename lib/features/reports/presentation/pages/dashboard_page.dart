@@ -11,20 +11,19 @@ import 'package:inventario_app/features/reports/domain/entities/report.dart';
 class DashboardPage extends StatelessWidget {
   final String storeId;
 
-  const DashboardPage({
-    super.key,
-    required this.storeId,
-  });
+  const DashboardPage({super.key, required this.storeId});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<ReportBloc>()
-        ..add(LoadDashboard(
-          storeId: storeId,
-          startDate: DateTime.now().subtract(const Duration(days: 30)),
-          endDate: DateTime.now(),
-        )),
+        ..add(
+          LoadDashboard(
+            storeId: storeId,
+            startDate: DateTime.now().subtract(const Duration(days: 30)),
+            endDate: DateTime.now(),
+          ),
+        ),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Dashboard'),
@@ -32,11 +31,15 @@ class DashboardPage extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: () {
-                context.read<ReportBloc>().add(LoadDashboard(
-                      storeId: storeId,
-                      startDate: DateTime.now().subtract(const Duration(days: 30)),
-                      endDate: DateTime.now(),
-                    ));
+                context.read<ReportBloc>().add(
+                  LoadDashboard(
+                    storeId: storeId,
+                    startDate: DateTime.now().subtract(
+                      const Duration(days: 30),
+                    ),
+                    endDate: DateTime.now(),
+                  ),
+                );
               },
             ),
           ],
@@ -52,7 +55,11 @@ class DashboardPage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                    const Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Colors.red,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       'Error al cargar dashboard',
@@ -61,11 +68,15 @@ class DashboardPage extends StatelessWidget {
                     const SizedBox(height: 8),
                     ElevatedButton(
                       onPressed: () {
-                        context.read<ReportBloc>().add(LoadDashboard(
-                              storeId: storeId,
-                              startDate: DateTime.now().subtract(const Duration(days: 30)),
-                              endDate: DateTime.now(),
-                            ));
+                        context.read<ReportBloc>().add(
+                          LoadDashboard(
+                            storeId: storeId,
+                            startDate: DateTime.now().subtract(
+                              const Duration(days: 30),
+                            ),
+                            endDate: DateTime.now(),
+                          ),
+                        );
                       },
                       child: const Text('Reintentar'),
                     ),
@@ -86,16 +97,21 @@ class DashboardPage extends StatelessWidget {
   }
 
   Widget _buildDashboard(BuildContext context, DashboardData dashboard) {
-    final currencyFormat = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
+    final currencyFormat = NumberFormat.currency(
+      symbol: '\$',
+      decimalDigits: 2,
+    );
     final percentFormat = NumberFormat.percentPattern();
 
     return RefreshIndicator(
       onRefresh: () async {
-        context.read<ReportBloc>().add(LoadDashboard(
-              storeId: storeId,
-              startDate: DateTime.now().subtract(const Duration(days: 30)),
-              endDate: DateTime.now(),
-            ));
+        context.read<ReportBloc>().add(
+          LoadDashboard(
+            storeId: storeId,
+            startDate: DateTime.now().subtract(const Duration(days: 30)),
+            endDate: DateTime.now(),
+          ),
+        );
       },
       child: ListView(
         padding: const EdgeInsets.all(16),
@@ -245,7 +261,9 @@ class DashboardPage extends StatelessWidget {
             () {
               // TODO: Navegar a PurchasesReportPage
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Reporte de compras próximamente')),
+                const SnackBar(
+                  content: Text('Reporte de compras próximamente'),
+                ),
               );
             },
           ),
@@ -259,7 +277,9 @@ class DashboardPage extends StatelessWidget {
             () {
               // TODO: Navegar a InventoryReportPage
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Reporte de inventario próximamente')),
+                const SnackBar(
+                  content: Text('Reporte de inventario próximamente'),
+                ),
               );
             },
           ),
@@ -273,7 +293,9 @@ class DashboardPage extends StatelessWidget {
             () {
               // TODO: Navegar a TransfersReportPage
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Reporte de traslados próximamente')),
+                const SnackBar(
+                  content: Text('Reporte de traslados próximamente'),
+                ),
               );
             },
           ),
@@ -285,9 +307,9 @@ class DashboardPage extends StatelessWidget {
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Text(
       title,
-      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+      style: Theme.of(
+        context,
+      ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 
@@ -322,9 +344,9 @@ class DashboardPage extends StatelessWidget {
             Text(
               value,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
           ],
         ),
@@ -350,9 +372,9 @@ class DashboardPage extends StatelessWidget {
             Text(
               '$count',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
@@ -389,9 +411,9 @@ class DashboardPage extends StatelessWidget {
                   Text(
                     title,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: color,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(message),
@@ -404,7 +426,10 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTopProductsList(BuildContext context, Map<String, dynamic> products) {
+  Widget _buildTopProductsList(
+    BuildContext context,
+    Map<String, dynamic> products,
+  ) {
     if (products.isEmpty) {
       return const Card(
         child: Padding(
@@ -415,7 +440,10 @@ class DashboardPage extends StatelessWidget {
     }
 
     final productList = products.values.take(5).toList();
-    final currencyFormat = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
+    final currencyFormat = NumberFormat.currency(
+      symbol: '\$',
+      decimalDigits: 2,
+    );
 
     return Card(
       child: ListView.separated(
@@ -466,12 +494,13 @@ class DashboardPage extends StatelessWidget {
           backgroundColor: color.withOpacity(0.2),
           child: Icon(icon, color: color),
         ),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(subtitle),
-        trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[600]),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: Colors.grey[600],
+        ),
         onTap: onTap,
       ),
     );

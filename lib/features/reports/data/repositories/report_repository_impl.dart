@@ -6,7 +6,7 @@ import 'package:inventario_app/features/reports/domain/entities/report.dart';
 import 'package:inventario_app/features/reports/domain/repositories/report_repository.dart';
 
 /// Implementación del repositorio de reportes
-/// 
+///
 /// Patrón Offline-First: Los reportes se generan exclusivamente desde
 /// la base de datos local SQLite, ya que requieren acceso a datos históricos
 /// y cálculos agregados complejos.
@@ -14,10 +14,7 @@ class ReportRepositoryImpl implements ReportRepository {
   final ReportLocalDataSource _localDataSource;
   final ReportRemoteDataSource _remoteDataSource;
 
-  ReportRepositoryImpl(
-    this._localDataSource,
-    this._remoteDataSource,
-  );
+  ReportRepositoryImpl(this._localDataSource, this._remoteDataSource);
 
   @override
   Future<Result<DashboardData>> getDashboard({
@@ -33,7 +30,9 @@ class ReportRepositoryImpl implements ReportRepository {
       );
       return Success(dashboard);
     } catch (e) {
-      return Error(DatabaseFailure('Error al generar dashboard: ${e.toString()}'));
+      return Error(
+        DatabaseFailure('Error al generar dashboard: ${e.toString()}'),
+      );
     }
   }
 
@@ -51,7 +50,9 @@ class ReportRepositoryImpl implements ReportRepository {
       );
       return Success(report);
     } catch (e) {
-      return Error(DatabaseFailure('Error al generar reporte de ventas: ${e.toString()}'));
+      return Error(
+        DatabaseFailure('Error al generar reporte de ventas: ${e.toString()}'),
+      );
     }
   }
 
@@ -69,7 +70,9 @@ class ReportRepositoryImpl implements ReportRepository {
       );
       return Success(report);
     } catch (e) {
-      return Error(DatabaseFailure('Error al generar reporte de compras: ${e.toString()}'));
+      return Error(
+        DatabaseFailure('Error al generar reporte de compras: ${e.toString()}'),
+      );
     }
   }
 
@@ -81,7 +84,11 @@ class ReportRepositoryImpl implements ReportRepository {
       final report = await _localDataSource.getInventoryReport(storeId);
       return Success(report);
     } catch (e) {
-      return Error(DatabaseFailure('Error al generar reporte de inventario: ${e.toString()}'));
+      return Error(
+        DatabaseFailure(
+          'Error al generar reporte de inventario: ${e.toString()}',
+        ),
+      );
     }
   }
 
@@ -99,7 +106,11 @@ class ReportRepositoryImpl implements ReportRepository {
       );
       return Success(report);
     } catch (e) {
-      return Error(DatabaseFailure('Error al generar reporte de traslados: ${e.toString()}'));
+      return Error(
+        DatabaseFailure(
+          'Error al generar reporte de traslados: ${e.toString()}',
+        ),
+      );
     }
   }
 

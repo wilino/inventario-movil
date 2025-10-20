@@ -71,10 +71,7 @@ class ReportExported extends ReportState {
   final String filePath;
   final String format; // 'pdf' o 'excel'
 
-  const ReportExported({
-    required this.filePath,
-    required this.format,
-  });
+  const ReportExported({required this.filePath, required this.format});
 
   @override
   List<Object?> get props => [filePath, format];

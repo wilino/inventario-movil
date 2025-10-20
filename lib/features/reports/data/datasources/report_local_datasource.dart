@@ -14,45 +14,59 @@ class ReportLocalDataSource {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
-    final start = startDate ?? DateTime.now().subtract(const Duration(days: 30));
+    final start =
+        startDate ?? DateTime.now().subtract(const Duration(days: 30));
     final end = endDate ?? DateTime.now();
 
     // Obtener ventas del período
-    final sales = await (db.select(db.sales)
-          ..where((t) =>
-              t.storeId.equals(storeId) &
-              t.at.isBiggerOrEqualValue(start) &
-              t.at.isSmallerOrEqualValue(end)))
-        .get();
+    final sales =
+        await (db.select(db.sales)..where(
+              (t) =>
+                  t.storeId.equals(storeId) &
+                  t.at.isBiggerOrEqualValue(start) &
+                  t.at.isSmallerOrEqualValue(end),
+            ))
+            .get();
 
     // Obtener compras del período
-    final purchases = await (db.select(db.purchases)
-          ..where((t) =>
-              t.storeId.equals(storeId) &
-              t.at.isBiggerOrEqualValue(start) &
-              t.at.isSmallerOrEqualValue(end)))
-        .get();
+    final purchases =
+        await (db.select(db.purchases)..where(
+              (t) =>
+                  t.storeId.equals(storeId) &
+                  t.at.isBiggerOrEqualValue(start) &
+                  t.at.isSmallerOrEqualValue(end),
+            ))
+            .get();
 
     // Obtener transferencias del período
-    final transfers = await (db.select(db.transfers)
-          ..where((t) =>
-              (t.fromStoreId.equals(storeId) | t.toStoreId.equals(storeId)) &
-              t.createdAt.isBiggerOrEqualValue(start) &
-              t.createdAt.isSmallerOrEqualValue(end)))
-        .get();
+    final transfers =
+        await (db.select(db.transfers)..where(
+              (t) =>
+                  (t.fromStoreId.equals(storeId) |
+                      t.toStoreId.equals(storeId)) &
+                  t.createdAt.isBiggerOrEqualValue(start) &
+                  t.createdAt.isSmallerOrEqualValue(end),
+            ))
+            .get();
 
     // Obtener alertas de stock bajo (comparar con minQty en memoria)
-    final allInventory = await (db.select(db.inventory)
-          ..where((t) => t.storeId.equals(storeId)))
-        .get();
-    final lowStock = allInventory.where((item) => item.stockQty <= item.minQty).toList();
+    final allInventory = await (db.select(
+      db.inventory,
+    )..where((t) => t.storeId.equals(storeId))).get();
+    final lowStock = allInventory
+        .where((item) => item.stockQty <= item.minQty)
+        .toList();
 
     // Calcular métricas
     final totalRevenue = sales.fold<double>(0, (sum, sale) => sum + sale.total);
-    final totalCosts =
-        purchases.fold<double>(0, (sum, purchase) => sum + purchase.total);
+    final totalCosts = purchases.fold<double>(
+      0,
+      (sum, purchase) => sum + purchase.total,
+    );
     final profit = totalRevenue - totalCosts;
-    final profitMargin = totalRevenue > 0 ? ((profit / totalRevenue) * 100).toDouble() : 0.0;
+    final profitMargin = totalRevenue > 0
+        ? ((profit / totalRevenue) * 100).toDouble()
+        : 0.0;
 
     // Ventas por día
     final revenueByDay = <String, double>{};
@@ -66,10 +80,7 @@ class ReportLocalDataSource {
 
     // Performance por tienda (mock - en producción obtener de múltiples tiendas)
     final storePerformance = {
-      storeId: {
-        'sales': totalRevenue,
-        'transactions': sales.length,
-      }
+      storeId: {'sales': totalRevenue, 'transactions': sales.length},
     };
 
     return DashboardData(
@@ -94,15 +105,19 @@ class ReportLocalDataSource {
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    final sales = await (db.select(db.sales)
-          ..where((t) =>
-              t.storeId.equals(storeId) &
-              t.at.isBiggerOrEqualValue(startDate) &
-              t.at.isSmallerOrEqualValue(endDate)))
-        .get();
+    final sales =
+        await (db.select(db.sales)..where(
+              (t) =>
+                  t.storeId.equals(storeId) &
+                  t.at.isBiggerOrEqualValue(startDate) &
+                  t.at.isSmallerOrEqualValue(endDate),
+            ))
+            .get();
 
     final totalSales = sales.fold<double>(0, (sum, sale) => sum + sale.total);
-    final avgTicket = sales.isNotEmpty ? (totalSales / sales.length).toDouble() : 0.0;
+    final avgTicket = sales.isNotEmpty
+        ? (totalSales / sales.length).toDouble()
+        : 0.0;
 
     // Ventas por día
     final salesByDay = <String, double>{};
@@ -116,10 +131,7 @@ class ReportLocalDataSource {
 
     // Ventas por tienda
     final salesByStore = {
-      storeId: {
-        'total': totalSales,
-        'transactions': sales.length,
-      }
+      storeId: {'total': totalSales, 'transactions': sales.length},
     };
 
     return SalesReport(
@@ -140,17 +152,22 @@ class ReportLocalDataSource {
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    final purchases = await (db.select(db.purchases)
-          ..where((t) =>
-              t.storeId.equals(storeId) &
-              t.at.isBiggerOrEqualValue(startDate) &
-              t.at.isSmallerOrEqualValue(endDate)))
-        .get();
+    final purchases =
+        await (db.select(db.purchases)..where(
+              (t) =>
+                  t.storeId.equals(storeId) &
+                  t.at.isBiggerOrEqualValue(startDate) &
+                  t.at.isSmallerOrEqualValue(endDate),
+            ))
+            .get();
 
-    final totalPurchases =
-        purchases.fold<double>(0, (sum, purchase) => sum + purchase.total);
-    final avgPurchase =
-        purchases.isNotEmpty ? (totalPurchases / purchases.length).toDouble() : 0.0;
+    final totalPurchases = purchases.fold<double>(
+      0,
+      (sum, purchase) => sum + purchase.total,
+    );
+    final avgPurchase = purchases.isNotEmpty
+        ? (totalPurchases / purchases.length).toDouble()
+        : 0.0;
 
     // Compras por día
     final purchasesByDay = <String, double>{};
@@ -164,10 +181,7 @@ class ReportLocalDataSource {
 
     // Compras por tienda
     final purchasesByStore = {
-      storeId: {
-        'total': totalPurchases,
-        'transactions': purchases.length,
-      }
+      storeId: {'total': totalPurchases, 'transactions': purchases.length},
     };
 
     return PurchasesReport(
@@ -183,12 +197,10 @@ class ReportLocalDataSource {
   }
 
   /// Genera reporte de inventario
-  Future<InventoryReport> getInventoryReport({
-    required String storeId,
-  }) async {
-    final inventory = await (db.select(db.inventory)
-          ..where((t) => t.storeId.equals(storeId)))
-        .get();
+  Future<InventoryReport> getInventoryReport({required String storeId}) async {
+    final inventory = await (db.select(
+      db.inventory,
+    )..where((t) => t.storeId.equals(storeId))).get();
 
     final totalProducts = inventory.length;
     // Valor estimado usando precio promedio (en producción calcular desde productos)
@@ -198,15 +210,14 @@ class ReportLocalDataSource {
       (sum, item) => sum + (item.stockQty * avgPrice),
     );
 
-    final lowStock = inventory.where((item) => item.stockQty <= item.minQty).toList();
+    final lowStock = inventory
+        .where((item) => item.stockQty <= item.minQty)
+        .toList();
     final outOfStock = inventory.where((item) => item.stockQty == 0).toList();
 
     // Inventario por tienda
     final inventoryByStore = {
-      storeId: {
-        'products': totalProducts,
-        'value': totalValue,
-      }
+      storeId: {'products': totalProducts, 'value': totalValue},
     };
 
     // Productos por categoría (mock - requiere relación con productos)
@@ -218,12 +229,14 @@ class ReportLocalDataSource {
 
     // Items con stock bajo
     final lowStockItems = lowStock
-        .map((item) => {
-              'productId': item.productId,
-              'variantId': item.variantId,
-              'currentStock': item.stockQty,
-              'minQty': item.minQty,
-            })
+        .map(
+          (item) => {
+            'productId': item.productId,
+            'variantId': item.variantId,
+            'currentStock': item.stockQty,
+            'minQty': item.minQty,
+          },
+        )
         .toList();
 
     return InventoryReport(
@@ -244,12 +257,15 @@ class ReportLocalDataSource {
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    final transfers = await (db.select(db.transfers)
-          ..where((t) =>
-              (t.fromStoreId.equals(storeId) | t.toStoreId.equals(storeId)) &
-              t.createdAt.isBiggerOrEqualValue(startDate) &
-              t.createdAt.isSmallerOrEqualValue(endDate)))
-        .get();
+    final transfers =
+        await (db.select(db.transfers)..where(
+              (t) =>
+                  (t.fromStoreId.equals(storeId) |
+                      t.toStoreId.equals(storeId)) &
+                  t.createdAt.isBiggerOrEqualValue(startDate) &
+                  t.createdAt.isSmallerOrEqualValue(endDate),
+            ))
+            .get();
 
     final pending = transfers.where((t) => t.status == 'pending').length;
     final inTransit = transfers.where((t) => t.status == 'in_transit').length;
@@ -264,8 +280,7 @@ class ReportLocalDataSource {
     }
 
     // Transferencias por tienda
-    final outgoing =
-        transfers.where((t) => t.fromStoreId == storeId).length;
+    final outgoing = transfers.where((t) => t.fromStoreId == storeId).length;
     final incoming = transfers.where((t) => t.toStoreId == storeId).length;
 
     final transfersByStore = {
@@ -273,7 +288,7 @@ class ReportLocalDataSource {
         'outgoing': outgoing,
         'incoming': incoming,
         'total': transfers.length,
-      }
+      },
     };
 
     return TransfersReport(
@@ -323,12 +338,14 @@ class ReportLocalDataSource {
     DateTime startDate,
     DateTime endDate,
   ) async {
-    final purchases = await (db.select(db.purchases)
-          ..where((t) =>
-              t.storeId.equals(storeId) &
-              t.at.isBiggerOrEqualValue(startDate) &
-              t.at.isSmallerOrEqualValue(endDate)))
-        .get();
+    final purchases =
+        await (db.select(db.purchases)..where(
+              (t) =>
+                  t.storeId.equals(storeId) &
+                  t.at.isBiggerOrEqualValue(startDate) &
+                  t.at.isSmallerOrEqualValue(endDate),
+            ))
+            .get();
 
     final suppliers = <String, Map<String, dynamic>>{};
     for (final purchase in purchases) {

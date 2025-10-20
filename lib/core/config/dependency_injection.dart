@@ -218,16 +218,16 @@ void _setupTransfersModule() {
   );
 
   // === REPORTS MODULE ===
-  
+
   // Data sources
   getIt.registerLazySingleton<ReportLocalDataSource>(
     () => ReportLocalDataSource(getIt<AppDatabase>()),
   );
-  
+
   getIt.registerLazySingleton<ReportRemoteDataSource>(
     () => ReportRemoteDataSource(getIt<SupabaseClient>()),
   );
-  
+
   // Repository
   getIt.registerLazySingleton<ReportRepository>(
     () => ReportRepositoryImpl(
@@ -235,24 +235,24 @@ void _setupTransfersModule() {
       getIt<ReportRemoteDataSource>(),
     ),
   );
-  
+
   // Use cases
   getIt.registerLazySingleton(
     () => GetDashboardUseCase(getIt<ReportRepository>()),
   );
-  
+
   getIt.registerLazySingleton(
     () => GetSalesReportUseCase(getIt<ReportRepository>()),
   );
-  
+
   getIt.registerLazySingleton(
     () => GetPurchasesReportUseCase(getIt<ReportRepository>()),
   );
-  
+
   getIt.registerLazySingleton(
     () => GetInventoryReportUseCase(getIt<ReportRepository>()),
   );
-  
+
   // BLoC
   getIt.registerFactory(
     () => ReportBloc(

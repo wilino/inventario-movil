@@ -9,7 +9,7 @@ import 'package:inventario_app/features/reports/presentation/bloc/report_event.d
 import 'package:inventario_app/features/reports/presentation/bloc/report_state.dart';
 
 /// BLoC para gestión de reportes
-/// 
+///
 /// Coordina la generación de diferentes tipos de reportes:
 /// - Dashboard con métricas generales
 /// - Reportes específicos (ventas, compras, inventario, traslados)
@@ -27,12 +27,12 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
     required GetPurchasesReportUseCase getPurchasesReportUseCase,
     required GetInventoryReportUseCase getInventoryReportUseCase,
     required ReportRepository reportRepository,
-  })  : _getDashboardUseCase = getDashboardUseCase,
-        _getSalesReportUseCase = getSalesReportUseCase,
-        _getPurchasesReportUseCase = getPurchasesReportUseCase,
-        _getInventoryReportUseCase = getInventoryReportUseCase,
-        _reportRepository = reportRepository,
-        super(ReportInitial()) {
+  }) : _getDashboardUseCase = getDashboardUseCase,
+       _getSalesReportUseCase = getSalesReportUseCase,
+       _getPurchasesReportUseCase = getPurchasesReportUseCase,
+       _getInventoryReportUseCase = getInventoryReportUseCase,
+       _reportRepository = reportRepository,
+       super(ReportInitial()) {
     on<LoadDashboard>(_onLoadDashboard);
     on<LoadSalesReport>(_onLoadSalesReport);
     on<LoadPurchasesReport>(_onLoadPurchasesReport);
@@ -112,9 +112,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
   ) async {
     emit(ReportLoading());
 
-    final result = await _getInventoryReportUseCase(
-      storeId: event.storeId,
-    );
+    final result = await _getInventoryReportUseCase(storeId: event.storeId);
 
     switch (result) {
       case Success(:final value):

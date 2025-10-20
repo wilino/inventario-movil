@@ -14,11 +14,7 @@ class LoadDashboard extends ReportEvent {
   final DateTime? startDate;
   final DateTime? endDate;
 
-  const LoadDashboard({
-    required this.storeId,
-    this.startDate,
-    this.endDate,
-  });
+  const LoadDashboard({required this.storeId, this.startDate, this.endDate});
 
   @override
   List<Object?> get props => [storeId, startDate, endDate];
@@ -87,10 +83,7 @@ class ExportToPdf extends ReportEvent {
   final String reportType;
   final Map<String, dynamic> data;
 
-  const ExportToPdf({
-    required this.reportType,
-    required this.data,
-  });
+  const ExportToPdf({required this.reportType, required this.data});
 
   @override
   List<Object?> get props => [reportType, data];
@@ -101,10 +94,7 @@ class ExportToExcel extends ReportEvent {
   final String reportType;
   final Map<String, dynamic> data;
 
-  const ExportToExcel({
-    required this.reportType,
-    required this.data,
-  });
+  const ExportToExcel({required this.reportType, required this.data});
 
   @override
   List<Object?> get props => [reportType, data];
